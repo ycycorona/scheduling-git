@@ -1,0 +1,108 @@
+body {
+    /*微软雅黑优先*/
+    font-family: Microsoft Yahei, Helvetica, Hiragino Sans GB, sans-serif;
+    /*字体大小*/
+    font-size: 12px;
+}
+
+a {
+    cursor: pointer
+}
+
+.table>tbody>tr>td,.table>tbody>tr>th,.table>tfoot>tr>td,.table>tfoot>tr>th,.table>thead>tr>td,.table>thead>tr>th{
+    vertical-align: baseline;
+}
+
+/*.row input {
+    height: 35px;
+    line-height: 35px;
+}
+
+.queryDiv {
+    margin-top: 2px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+.form-control {
+    height: 30px;
+    padding: 4px 12px;
+}
+
+*/
+
+.btn {
+    padding: 4px 8px;
+    font-size: 13px;
+}
+
+.panel-body {
+    padding: 1px 10px 1px 10px;
+}
+
+.panel {
+    margin-bottom: 0;
+}
+
+.panel-heading {
+    padding: 5px 15px;
+}
+/*  libeina 20170913 */
+/*input[type="text"] {
+    line-height: 20px;
+} */
+
+/* ycy add */
+.bootstrap-table .table,
+.bootstrap-table .table > tbody > tr > th,
+.bootstrap-table .table > tfoot > tr > th,
+.bootstrap-table .table > thead > tr > td,
+.bootstrap-table .table > tbody > tr > td,
+.bootstrap-table .table > tfoot > tr > td {
+    padding: 4px !important;
+    text-align: center
+}
+
+.fixed-table-container thead th .th-inner, .fixed-table-container tbody td .th-inner {
+    padding: 4px;
+    text-align: center;
+    line-height: 1.5
+}
+
+.fixed-table-pagination div.pagination, .fixed-table-pagination .pagination-detail {
+    margin-top: 5px;
+}
+
+table {
+    font-size: 12px;
+}
+
+.bootstrap-table button {
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+
+.bootstrap-table .bars.pull-left {
+    margin-bottom: 5px;
+}
+
+/*libeina 20170911*/
+.modal-header{
+	background: #09c;
+	color:#fff;
+	border-bottom:1px solid #09c;
+	border-top-left-radius:4px;
+	border-top-right-radius:4px;
+}
+.modal-header .close{
+	color:#fff;
+	opacity:0.8;
+}
+.btn-full-padding{
+    padding-top: 6px;
+    padding-bottom: 6px;
+}

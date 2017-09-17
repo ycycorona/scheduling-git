@@ -1,0 +1,25 @@
+{
+  "name": "scheduling",
+  "authors": [
+    "ycycorona <ycycorona@qq.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "resource/lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "bootstrap": "~3.3.6",
+    "fullcalendar": "3.5.1",
+    "fullcalendar-scheduler": "1.7.1",
+    "jquery-ui": "jquery.ui#^1.12.1"
+  }
+}

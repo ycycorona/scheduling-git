@@ -1,0 +1,306 @@
+[
+  {
+    "date": "2017-09-12",
+    "dayClass": [
+      {
+        "machineNO": "A320-1",
+        "clas": [
+          {
+            "session": 1,
+            "startTime": "08:00:00",
+            "endTime": "12:00:00",
+            "classOrder": 1,
+            "classDuration": {
+              "hours": 2,
+              "minutes": 0
+            },
+            "students": [
+              {
+                "pCode": "1151",
+                "name": "张民"
+              },
+              {
+                "pCode": "1169",
+                "name": "刘文杰"
+              }
+            ],
+            "teachers": [
+              {
+                "pCode": "1056",
+                "name": "刘坤"
+              },
+              {
+                "pCode": "1015",
+                "name": "徐凯"
+              }
+            ],
+            "inspectors": [
+              {
+                "pCode": "1109",
+                "name": "朱剑"
+              },
+              {
+                "pCode": "1114",
+                "name": "关禹"
+              }
+            ],
+            "log": "保持经历熟练检查"
+          },
+          {
+            "session": 2,
+            "startTime": "12:00:00",
+            "endTime": "16:00:00",
+            "classOrder": 3,
+            "classDuration": {
+              "hours": 2,
+              "minutes": 0
+            },
+            "students": [
+              {
+                "pCode": "1151",
+                "name": "张民"
+              },
+              {
+                "pCode": "1169",
+                "name": "刘文杰"
+              }
+            ],
+            "teachers": [
+              {
+                "pCode": "1056",
+                "name": "刘坤"
+              },
+              {
+                "pCode": "1015",
+                "name": "徐凯"
+              }
+            ],
+            "inspectors": [
+              {
+                "pCode": "1109",
+                "name": "朱剑"
+              },
+              {
+                "pCode": "1114",
+                "name": "关禹"
+              }
+            ],
+            "log": "熟练检查、李响B类教员评估"
+          },
+          {
+            "session": 2,
+            "startTime": "16:00:00",
+            "endTime": "20:00:00",
+            "classOrder": 5,
+            "classDuration": {
+              "hours": 2,
+              "minutes": 0
+            },
+            "students": [
+              {
+                "pCode": "1151",
+                "name": "张民"
+              },
+              {
+                "pCode": "1169",
+                "name": "刘文杰"
+              }
+            ],
+            "teachers": [
+              {
+                "pCode": "1056",
+                "name": "刘坤"
+              },
+              {
+                "pCode": "1015",
+                "name": "徐凯"
+              }
+            ],
+            "inspectors": [
+              {
+                "pCode": "1109",
+                "name": "朱剑"
+              },
+              {
+                "pCode": "1114",
+                "name": "关禹"
+              }
+            ],
+            "log": "实践考试准备"
+          },
+          {
+            "session": 2,
+            "startTime": "20:00:00",
+            "endTime": "24:00:00",
+            "classOrder": 7,
+            "classDuration": {
+              "hours": 2,
+              "minutes": 0
+            },
+            "students": [
+              {
+                "pCode": "1151",
+                "name": "张民"
+              },
+              {
+                "pCode": "1169",
+                "name": "刘文杰"
+              }
+            ],
+            "teachers": [
+              {
+                "pCode": "1056",
+                "name": "刘坤"
+              },
+              {
+                "pCode": "1015",
+                "name": "徐凯"
+              }
+            ],
+            "inspectors": [
+              {
+                "pCode": "1109",
+                "name": "朱剑"
+              },
+              {
+                "pCode": "1114",
+                "name": "关禹"
+              }
+            ],
+            "log": "复训"
+          }
+        ]
+      },
+      {
+        "machineNO": "A320-2",
+        "clas": [
+          {
+            "session": 1,
+            "startTime": "08:00:00",
+            "endTime": "12:00:00",
+            "classOrder": 1,
+            "classDuration": {
+              "hours": 2,
+              "minutes": 0
+            },
+            "students": [
+              {
+                "pCode": "1151",
+                "name": "张民"
+              },
+              {
+                "pCode": "1169",
+                "name": "刘文杰"
+              }
+            ],
+            "teachers": [
+              {
+                "pCode": "1056",
+                "name": "刘坤"
+              },
+              {
+                "pCode": "1015",
+                "name": "徐凯"
+              }
+            ],
+            "inspectors": [
+              {
+                "pCode": "1109",
+                "name": "朱剑"
+              },
+              {
+                "pCode": "1114",
+                "name": "关禹"
+              }
+            ],
+            "log": "外籍实践考试"
+          },
+          {
+            "session": 2,
+            "startTime": "12:00:00",
+            "endTime": "16:00:00",
+            "classOrder": 3,
+            "classDuration": {
+              "hours": 2,
+              "minutes": 0
+            },
+            "students": [
+              {
+                "pCode": "1151",
+                "name": "张民"
+              },
+              {
+                "pCode": "1169",
+                "name": "刘文杰"
+              }
+            ],
+            "teachers": [
+              {
+                "pCode": "1056",
+                "name": "刘坤"
+              },
+              {
+                "pCode": "1015",
+                "name": "徐凯"
+              }
+            ],
+            "inspectors": [
+              {
+                "pCode": "1109",
+                "name": "朱剑"
+              },
+              {
+                "pCode": "1114",
+                "name": "关禹"
+              }
+            ],
+            "log": "复训"
+          },
+          {
+            "session": 2,
+            "startTime": "16:00:00",
+            "endTime": "20:00:00",
+            "classOrder": 5,
+            "classDuration": {
+              "hours": 2,
+              "minutes": 0
+            },
+            "students": [
+              {
+                "pCode": "1151",
+                "name": "张民"
+              },
+              {
+                "pCode": "1169",
+                "name": "刘文杰"
+              }
+            ],
+            "teachers": [
+              {
+                "pCode": "1056",
+                "name": "刘坤"
+              },
+              {
+                "pCode": "1015",
+                "name": "徐凯"
+              }
+            ],
+            "inspectors": [
+              {
+                "pCode": "1109",
+                "name": "朱剑"
+              },
+              {
+                "pCode": "1114",
+                "name": "关禹"
+              }
+            ],
+            "log": "实践考试准备"
+          }
+        ]
+      }
+    ]
+  }
+]
+
+

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>模拟机排班</title>
+    <link rel='stylesheet' href='resource/lib/bootstrap/dist/css/bootstrap.css'/>
+    <link rel='stylesheet' href='resource/lib/fullcalendar/dist/fullcalendar.css'/>
+    <link rel='stylesheet' href='resource/lib/fullcalendar-scheduler/dist/scheduler.css'/>
+    <link rel='stylesheet' href='resource/css/custom-style/base-css.css'/>
+    <link rel='stylesheet' href='resource/lib/hplus/css/style.css'/>
+    <link rel='stylesheet' href='resource/lib/hplus/css/base.css'/>
+    <link rel='stylesheet' href='resource/lib/layer/skin/layer.css'/>
+    <link rel='stylesheet' href='resource/lib/select2/css/select2.min.css'/>
+    <link rel='stylesheet' href='resource/lib/select2/css/select2-bootstrap.min.css'/>
+    <style>
+        #calendar {
+            width: 1190px;
+            margin: 50px auto;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .no-margin {
+            margin: 0;
+        }
+
+        .item-wrap > .card-item {
+            background-color: #9d9d9d;
+            padding: 2px 2px;
+            margin: 2px 2px;
+        }
+
+        .box-wrap > div {
+            text-align: center;
+
+        }
+
+        /*除了最后一个，加点线*/
+        .box-wrap > div:not(.class-desc) {
+            margin-bottom: 5px;
+            border-bottom: 1px #ddd dashed;
+            padding-bottom: 5px;
+        }
+
+        /*时间块里面文字自动换行*/
+        .fc-timeline-event .fc-content {
+            white-space: normal;
+            line-height: 2;
+
+        }
+
+        /*人名不分行*/
+        .fc-timeline-event .fc-content span.card-item {
+            /*word-break: keep-all;*/
+        }
+
+        #delete-box,#test-box {
+            height: 200px;
+            background-color: #9d9d9d;
+            line-height: 200px;
+            text-align: center
+        }
+        .ui-state-highlight{
+            background-color: #1b6d85;
+        }
+        .ui-state-hover{
+            background-color: red;
+        }
+        .ui-state-active{
+            background-color: orange;
+        }
+        .fc-chrono .fc-cell-content.border-bottom {
+            border-bottom: 1px solid #ddd;
+        }
+        .fc-ltr .fc-time-area .fc-chrono th {
+            text-align: center;
+        }
+        .margin-top {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="margin-top"></div>
+    <div class="row">
+        <div class="col-xs-2" >
+            <div class="ui-widget-content external-event-box" id="tpl-wrap">
+                <class-tpl></class-tpl>
+            </div>
+
+        </div>
+        <div class="col-xs-10">
+            <div id='calendar'></div>
+        </div>
+    </div>
+</div>
+
+<!--layer-->
+<div class="wrapper wrapper-content layer-body" id="layer-body" style="display:none;">
+    <form class="form-horizontal" id="">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">学员<font color='red'>*</font>:
+            </label>
+            <div class="col-sm-6">
+                <select id="select-students"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label  class="col-sm-4 control-label">教员</label>
+            <div class="text-left col-sm-6">
+                <select id="select-teachers"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label  class="col-sm-4 control-label">检查员</label>
+            <div class="text-left col-sm-6">
+                <select id="select-inspectors"></select>
+            </div>
+        </div>
+        <div class="form-group form-h">
+            <label  class="col-sm-4 control-label">课程时间</label>
+            <div class="text-left col-sm-6">
+                <input type="text"  id="class-time-start" name="class-time-start" class="form-control" />-
+                <input type="text"  id="class-time-end" name="class-time-end" class="form-control" />
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<!--模板区，复制用-->
+<div id="template" style="display: none">
+    <div class="box-wrap ">
+        <div class="no-margin item-wrap student">
+
+        </div>
+        <div class="row no-margin item-wrap teacher inspector">
+
+        </div>
+        <div class="class-desc item-wrap log">
+
+        </div>
+    </div>
+</div>
+<script src='resource/lib/jquery/dist/jquery.js'></script>
+<script src='resource/lib/vue.js'></script>
+<script src='resource/lib/jquery-ui-1.12.1/jquery-ui.min.js'></script>
+<script src='resource/lib/bootstrap/dist/js/bootstrap.js'></script>
+<script src='resource/lib/moment/min/moment.min.js'></script>
+<script src='resource/lib/fullcalendar/dist/fullcalendar.js'></script>
+<script src='resource/lib/fullcalendar-scheduler/dist/scheduler.js'></script>
+<script src='resource/lib/layer/layer.js'></script>
+<script src='resource/lib/select2/js/select2.min.js'></script>
+<script type="x-template" id="class-tpl">
+        <div class="fc-content fc-event" v-bindDrag>
+            <div class="box-wrap ">
+                <div class="no-margin item-wrap student">
+                    <span class="card-item">张民</span><span class="card-item">刘文杰</span>
+                </div>
+                <div class="row no-margin item-wrap teacher inspector">
+                    <span class="card-item">刘坤</span><span class="card-item">徐凯</span>
+                    <span class="card-item">朱剑</span><span class="card-item">关禹</span>
+                </div>
+                <div class="class-desc item-wrap log">
+                    <span class="card-item">3010743483660</span><span class="">外籍实践考试</span>
+                </div>
+            </div>
+        </div>
+</script>
+<script>
+    $.fn.select2.defaults.set( "theme", "bootstrap" ); //使用select2-bootstrap主题
+    moment.fn.toJSON = function() { return this.format()}; //处理时区的问题
+    var classTpl = {
+        props:["menuItem","objKey","basePath","href"],
+        template:'#class-tpl',
+        methods:{
+
+        },
+        directives: {
+            bindDrag: {
+                /*插入时绑定拖拽事件*/
+                inserted: function (el) {
+                    console.log('bindDrag');
+                    // make the event draggable using jQuery UI
+                    $(el).draggable({
+                        zIndex: 999,
+                        revert: true,      // will cause the event to go back to its
+                        revertDuration: 0  //  original position after the drag
+                    });
+                    // store data so the calendar knows to render an event upon drop
+                    $(el).data('event', {
+                        title: 'test', // use the element's text as the event title
+                        id: Dateobj.eventsList[0].id,
+                        duration: '01:00',
+                        editable: true,
+                        stick: true // maintain when user navigates (see docs on the renderEvent method)
+                    });
+                }
+            }
+        }
+    };
+
+    var timeLineOpt = {
+        minTime: {hours: 0, minutes: 0}, //开始时间
+        maxTime: {hours: 8, minutes: 0}, //结束时间
+        slotDuration: {hours:1, minutes:0}, //表格内部块，一个块代表几个小时，小课时长
+        slotLabelInterval: {hours:2, minutes:0} //标题一个块代表几个小时， 大课时长
+    };
+    var classOpt = {
+        classNum:4, //课时数
+        minClassNum: 8,  //每天最多的课时数
+        classDuration: '04:00:00', //课时长
+        minClassDuration: '02:00:00', //小课时长
+        /*一天的课程安排时间*/
+        classArrange: [
+            {
+                name: '第一场',
+                time: '08:00-12:00'
+            },
+            {
+                name: '第二场',
+                time: '12:15-16:15'
+            },
+            {
+                name: '第三场',
+                time: '16:30-20:30'
+            },
+            {
+                name: '第四场',
+                time: '20:45-00:45'
+            }
+        ],
+        classDisplayDuration: {
+
+        }
+    };
+    var classList; /*模拟的后台数据*/
+    var userList; /*模拟的人员数据*/
+    /*远程获取数据*/
+    $.ajax({
+        type: "get",
+        async: false,
+        url: "mockData/class_list.json",
+        dataType: 'json',
+        success: function (data) {
+            classList = data;
+/*            console.log(classList);*/
+        }
+    });
+    /*生成模拟的人员数据*/
+    $.ajax({
+        type: "get",
+        async: false,
+        url: "mockData/user.json",
+        dataType: 'json',
+        success: function (data) {
+            userList = data;
+        }
+    });
+    var Dateobj = generateResourceArray(classList); /*通过远程获取的原始数据生成一个对象,包含event数组以及resource数组*/
+    var eventsList = Dateobj.eventsList; //事件列表
+    var eventsListMap = getArrayMapById(eventsList); /*事件资源数组的map*/
+    console.log(Dateobj, eventsListMap);
+    var vueCon = new Vue({
+        el: '#tpl-wrap',
+        components: {
+            'class-tpl': classTpl
+        },
+        data: {
+            msg:'msg'
+        }
+    });
+    $(document).ready(function () {
+        /*新建选择框初始化*/
+        $('#select-students').select2({
+            placeholder: '选择学员',
+            data:userList,
+            multiple: true
+        });
+        $('#select-teachers').select2({
+            placeholder: '选择教员',
+            data:userList,
+            multiple: true
+        });
+        $('#select-inspectors').select2({
+            placeholder: '选择检查员',
+            data:userList,
+            multiple: true
+        });
+        /*生成模板*/
+        $(".external-event-box>.fc-event").each(function() {
+
+
+        });
+        /*生成resource和event数据*/
+        var calendarOpt = {
+            schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+            now: '2017-01-01', //当前时间
+            selectable: true, //是否可以单击选择
+            selectHelper: true,
+            eventOverlap: false, /*事件之间是否可以重叠*/
+            /*空日历选择之后的回调函数*/
+            select: function (start, end, jsEvent, view, resource) {
+                /*此处的start和end不带+08:00*/
+                openCreateLayer(start, end, resource); //打开新建事件的弹窗
+            },
+            /*事件的点击事件*/
+            eventClick: function(event, element) {
+                openEditLayer(event, element); //打开编辑事件的弹窗
+
+                /*$('#calendar').fullCalendar( 'removeEventSource', 100)*/
+            },
+            /*日历内的事件拖拽*/
+            eventDragStop: function (event, jsEvent, ui, view) {
+                /*console.log(jsEvent);*/
+
+            },
+            /*外部事件拖拽事件*/
+            drop:function (date, jsEvent, ui, resourceId ) {
+                $(this).data().event.id = Dateobj.eventsList[3].id;
+            },
+            eventReceive: function (event) {
+                console.log(event);
+            },
+            editable: true, //是否可以拖拽编辑duration、起始时间
+            droppable: true, //是否可以放置事件
+            aspectRatio: 2, //宽高比
+            resourceAreaWidth: '20%', /*左侧资源区的宽度*/
+            header: {
+                left: '',
+                center: '',
+                right: ''
+            },
+            defaultView: 'timelineDay', //默认视图
+            /*视图设置*/
+            views: {
+                timelineDay: {
+                    type: 'timeline',
+                    duration: {days: 1}, //事件线长度 默认1天
+                    slotDuration: {hours:1, minutes:0} , //表格内部块，一个块代表几个小时
+                    slotLabelFormat: [
+                        'kk:mm'  // top level of text*/
+                    ], //标题事件显示格式
+                    slotLabelInterval: {hours:2, minutes:0}, //标题一个块代表几个小时
+                    buttonText: '1DAY',
+                    scrollTime: '00:00',
+                    minTime: {hours: 0, minutes: 0},
+                    maxTime: {hours: 8, minutes: 0}
+                }
+            },
+            resourceColumns: [
+                {
+                    group: true,
+                    labelText: '日期',
+                    field: 'date',
+                    width: '60%'
+                },
+                {
+                    labelText: '模拟机号',
+                    field: 'machineNO',
+                    width: '40%'
+                }
+            ],
+            resources: Dateobj.resourcesList,
+            events: Dateobj.eventsList,
+            /*事件挂载到dom之前的拦截编辑*/
+            eventRender: eventRenderfun
+        };
+        $('#calendar').fullCalendar(calendarOpt);
+        /*测试自定义表格头*/
+        $('.fc-chrono .fc-widget-header').each(function (index) {
+            $(this).find('.fc-cell-text').text(classOpt.classArrange[index].time);
+            var $dom = $('<div class="fc-cell-content border-bottom"></div>');
+            $dom.text(classOpt.classArrange[index].name);
+            $(this).prepend($dom);
+        });
+
+    });
+
+    /**
+     * @desc 返回生成排课表需要的resources Array,以及events Array
+     * @param classList {Array} 从后来传来的数据数组
+     * @return {Object} 包含resources Array,以及events Array
+     */
+    function generateResourceArray(classList) {
+        var resourcesList = []; //resource数组， return用
+        var eventsList = []; //event数组， return用
+        var resCount = 0; //用来生成resource的ID
+        var eventCount = 0; //用来生成event的ID
+        classList.forEach(function (classListByDate, indexByDate, thisArrayClassList) {
+            var thisDate = '2017-01-01';
+            //classListByDateByMac 每天 数台模拟机里的课程列表
+            /*每一天里，按不同的模拟机遍历*/
+            classListByDate.dayClass.forEach(function (classListByDateByMac, indexDateByMac, thisArrayByDateByMac) {
+                //classListByDateByMac 每天 每一台模拟机里的课程列表
+                resCount++;
+                var resourceObj = {};
+                resourceObj.id = resCount;
+                resourceObj.date = classListByDate.date;
+                resourceObj.machineNO = classListByDateByMac.machineNO;
+                resourcesList.push(resourceObj);
+                //遍历每一天里每一台模拟机里的每一节课
+                classListByDateByMac.clas.forEach(function (classFinal, indexFinal, thisArrayFinal) {
+                    eventCount++;
+                    var eventObj = {};
+                    /*用时间戳做ID*/
+                    eventObj.id = parseInt(moment().format('x')) + eventsList.length;
+                    eventObj.resourceId = resCount; //课程对应的模拟机ID
+                    /*课程时间设置*/
+                    var start = moment.duration(timeLineOpt.minTime);
+                    var end = moment.duration(timeLineOpt.minTime);
+                    var classBefore = classFinal.classOrder - 1; //课程开始前的时间消耗
+                    for ( var i =1; i < classFinal.classOrder; i++){
+                        start.add(moment.duration(timeLineOpt.slotDuration));
+                        end.add(moment.duration(timeLineOpt.slotDuration));
+                    }
+                    end.add(moment.duration(classFinal.classDuration));
+                    /*console.log(start.humanize(), end.humanize());*/
+                    //注意 add方法是直接在对象上操作，会改变对象，而不是返回值
+                    var baseTimeStart = moment(thisDate + 'T00:00:00');
+                    var baseTimeEnd = moment(thisDate + 'T00:00:00');
+                    eventObj.start = baseTimeStart.add(start).toJSON(); //课程开始时间
+                    eventObj.end = baseTimeEnd.add(end).toJSON(); //课程结束时间
+                    eventObj.students = classFinal.students; //课程的学生
+                    eventObj.teachers = classFinal.teachers; //课程的老师
+                    eventObj.inspectors = classFinal.inspectors; //课程的检查员
+                    eventObj.log = classFinal.log; //课程的log
+                    eventsList.push(eventObj);
+                });
+            });
+        });
+        return {
+            resourcesList: resourcesList,
+            eventsList: eventsList
+        };
+    }
+
+    /**
+     * @desc 创建一个eventResource
+     * @params 自建event对象
+     * @return 返回一个规定格式的event数组
+     * */
+    function generateEventResource(eventObj) {
+        var eventArray = [eventObj];
+        return eventArray;
+    }
+    /**
+     * @通过id返回map,数组需要满足对象的键要求
+     * @param array {Array}
+     *
+     * */
+    function getArrayMapById(array) {
+        var obj = {};
+        array.forEach(function (item, index, thisArray) {
+            obj[item.id] = index;
+        });
+        return obj;
+    }
+
+    /**
+     * @desc 事件挂载到日历dom之前的拦截编辑
+     * @params event $element view
+     * */
+    function eventRenderfun (event, $element, view) {
+        /*复制显示模板*/
+        var $tpl = $("#template>.box-wrap").clone();
+        /*获得事件的唯一id  event.id*/
+        //插入学员
+        //console.log('eventRenderfun', event);
+        Dateobj.eventsList[eventsListMap[event.id]].students.forEach(function (student, index, studentsArray) {
+            var $student = $('<span class="card-item"> </span>');
+            $student.text(student.name);
+            $tpl.find('.student').append($student);
+        });
+        //插入老师
+        Dateobj.eventsList[eventsListMap[event.id]].teachers.forEach(function (teacher, index, teachersArray) {
+            var $teacher = $('<span class="card-item"> </span>');
+            $teacher.text(teacher.name);
+            $tpl.find('.teacher').append($teacher);
+        });
+        //插入检查员
+        Dateobj.eventsList[eventsListMap[event.id]].inspectors.forEach(function (inspector, index, inspectorsArray) {
+            var $inspector = $('<span class="card-item"> </span>');
+            $inspector.text(inspector.name);
+            $tpl.find('.inspector').append($inspector);
+        });
+/*        //插入id
+        var $id = $('<span class="card-item"> </span>');
+        $id.text('eventid' + event.id);
+        $tpl.find('.log').append($id);*/
+        //插入log
+        var $log = $('<span class=""> </span>');
+        $log.text(Dateobj.eventsList[eventsListMap[event.id]].log);
+        $tpl.find('.log').append($log);
+        $element.find(".fc-content>span.fc-title").remove(); //剔除fullcalendar默认的显示元素
+        $element.find(".fc-content").append($tpl); /*完成渲染元素的编辑*/
+    }
+    /**
+     * @desc 打开layer新建框
+     * @params start 开始事件 end 结束时间 resource 对应的resource
+     */
+    function openCreateLayer (start, end, resource) {
+        layer.open({
+            title: '新建课程',
+            type: 1,
+            skin: '', //样式类名
+            zIndex: 800,
+            area: ['390px',''],
+            btn:["保存","取消"],
+            yes: function(index, $layDom){
+                //生成事件对象
+                var eventData = {
+                    id: parseInt(moment().format('x')) + eventsList.length, //用时间戳作为ID
+                    //id: eventsList[0].id,
+                    resourceId: resource.id,
+                    start: start,
+                    end: end
+                };
+                /*格式化select2选出的人员*/
+                var students = $.map($('#select-students').select2('data'), function (obj) {
+                    return {
+                        name: obj.text,
+                        pCode: obj.id
+                    }
+                });
+                var teachers = $.map($('#select-teachers').select2('data'), function (obj) {
+                    return {
+                        name: obj.text,
+                        pCode: obj.id
+                    }
+                });
+                var inspectors = $.map($('#select-inspectors').select2('data'), function (obj) {
+                    return {
+                        name: obj.text,
+                        pCode: obj.id
+                    }
+                });
+                //向统一的事件库加入事件资源
+                var eventsListItem = {
+                    id: eventData.id,
+                    resourceId: parseInt(resource.id), //对应哪一个resource
+                    start: $layDom.find('#class-time-start').val(),
+                    end: $layDom.find('#class-time-end').val(),
+                    title: 'title',
+                    log: '训练',
+                    students: students,
+                    teachers: teachers,
+                    inspectors: inspectors
+                };
+                eventsList.push(eventsListItem);
+                eventsListMap = getArrayMapById(eventsList);//重新生成map
+                console.log(eventsListItem);
+                //console.log($('#select-students').select2('data'));
+                //添加事件
+                $('#calendar').fullCalendar( 'renderEvent', eventData , 'stick');
+                $('#calendar').fullCalendar('unselect');
+                layer.close(layer.index);
+            },
+            content: $("#layer-body"),
+            success:function($layDom){
+                $layDom.find('#class-time-start').val(moment(start.format()).format());
+                $layDom.find('#class-time-end').val(moment(end.format()).format());
+
+            },
+            end: function () {
+                //console.log('重置select2');
+                $('#select-students').val(null);
+                $('#select-teachers').val(null);
+                $('#select-inspectors').val(null);
+            }
+        });
+    }
+    /**
+     * @desc 打开layer编辑框
+     * @params start 开始事件 end 结束时间 resource 对应的resource
+     */
+    function openEditLayer (event, element) {
+        layer.open({
+            title: '编辑',
+            type: 1,
+            skin: '', //样式类名
+            zIndex: 800,
+            area: ['390px',''],
+            btn:["保存","取消"],
+            success:function($layDom){
+                $layDom.find('#class-time-start').val(event.start.format());
+                $layDom.find('#class-time-end').val(event.end.format());
+                /*填充已经存在的人员*/
+                /*格式化select2选出的人员*/
+                var students = $.map(event.students, function (obj) {
+                    return {
+                        id: obj.pCode,
+                        text: obj.name
+                    }
+                });
+                var teachers = $.map(event.teachers, function (obj) {
+                    return {
+                        id: obj.pCode,
+                        text: obj.name
+                    }
+                });
+                var inspectors = $.map(event.inspectors, function (obj) {
+                    return {
+                        id: obj.pCode,
+                        text: obj.name
+                    }
+                });
+                students.forEach(function (item, index, parray) {
+                    console.log('xunhuan');
+                    $('#select-students').val(item.id).trigger('change');
+                });
+                teachers.forEach(function (item, index, parray) {
+                    $('#select-teachers').val(item.id).trigger('change');
+                });
+                inspectors.forEach(function (item, index, parray) {
+                    $('#select-inspectors').val(item.id).trigger('change');
+                });
+
+            },
+            yes: function(index, $layDom){
+                //生成事件对象
+                var eventData = {
+                    id: event.id, //用时间戳作为ID
+                    resourceId: event.resourceId,
+                    start: start,
+                    end: end
+                };
+                /*格式化select2选出的人员*/
+                var students = $.map($('#select-students').select2('data'), function (obj) {
+                    return {
+                        name: obj.text,
+                        pCode: obj.id
+                    }
+                });
+                var teachers = $.map($('#select-teachers').select2('data'), function (obj) {
+                    return {
+                        name: obj.text,
+                        pCode: obj.id
+                    }
+                });
+                var inspectors = $.map($('#select-inspectors').select2('data'), function (obj) {
+                    return {
+                        name: obj.text,
+                        pCode: obj.id
+                    }
+                });
+                //向统一的事件库加入事件资源
+                var eventsListItem = {
+                    id: eventData.id,
+                    resourceId: parseInt(eventData.resourceId), //对应哪一个resource
+                    start: $layDom.find('#class-time-start').val(),
+                    end: $layDom.find('#class-time-end').val(),
+                    title: 'title',
+                    log: '训练',
+                    students: students,
+                    teachers: teachers,
+                    inspectors: inspectors
+                };
+                eventsList.push(eventsListItem);
+                eventsListMap = getArrayMapById(eventsList);//重新生成map
+
+                /*删除事件*/
+                $('#calendar').fullCalendar( 'removeEvents', event.id); /*根据id删除事件*/
+                //添加事件
+                $('#calendar').fullCalendar( 'renderEvent', eventData , 'stick');
+                $('#calendar').fullCalendar('unselect');
+                layer.close(layer.index);
+            },
+            content: $("#layer-body"),
+            end: function () {
+                //console.log('重置select2');
+                $('#select-students').val(null);
+                $('#select-teachers').val(null);
+                $('#select-inspectors').val(null);
+            }
+        });
+    }
+</script>
+</body>
+</html>

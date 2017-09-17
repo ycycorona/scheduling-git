@@ -1,0 +1,180 @@
+@charset "UTF-8";
+/*!
+base.css
+20170908 libeina
+*/
+html, body {
+    font-family: Microsoft YaHei;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.open .dropdown-toggle.btn-primary {
+    background-color: #286090;
+    border-color: #337ab7;
+}
+
+.btn-default {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+}
+
+.ibox-title-blue {
+    border-color: #09C;
+}
+
+.ibox-title-noborder {
+    border-top: 0px solid #09c;
+}
+
+.bootstrap-table button {
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+
+.bootstrap-table .table,
+.bootstrap-table .table > tbody > tr > th,
+.bootstrap-table .table > tfoot > tr > th,
+.bootstrap-table .table > thead > tr > td,
+.bootstrap-table .table > tbody > tr > td,
+.bootstrap-table .table > tfoot > tr > td {
+    padding: 4px !important;
+    text-align: center
+}
+
+.fixed-table-container thead th .th-inner, .fixed-table-container tbody td .th-inner {
+    padding: 4px !important;
+    text-align: center;
+    line-height: 1.5
+}
+
+.fixed-table-pagination div.pagination, .fixed-table-pagination .pagination-detail {
+    margin-top: 5px;
+}
+
+table {
+    font-size: 12px;
+}
+
+.layer-date {
+    max-width: 100%;
+}
+
+.laydate-icon {
+    border: 1px solid #e5e6e7;
+}
+
+.m-b {
+    margin-bottom: 5px;
+}
+
+.form-control, .single-line {
+    padding: 4px 10px;
+}
+.form-control{
+    height:30px;
+    padding:4px 8px;
+}
+.tabs-container .nav-tabs > li.active > a,
+.tabs-container .nav-tabs > li.active > a:hover,
+.tabs-container .nav-tabs > li.active > a:focus {
+    border: 1px solid #337ab7;
+}
+
+.tabs-container .nav-tabs > li.active > a,
+.tabs-container .nav-tabs > li.active > a:hover,
+.tabs-container .nav-tabs > li.active > a:focus {
+    background: #337ab7;
+    color: #fff;
+}
+
+.tabs-container .panel-body {
+    border: 1px solid #337ab7;
+}
+
+.tabs-container .nav-tabs {
+    border-bottom: 1px solid #337ab7;
+}
+
+.form-group {
+    margin-bottom: 8px;
+}
+
+.form-label-v {
+    display: table;
+    height: 30px;
+}
+
+.form-label-v label {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: right;
+
+}
+
+.form-label-v span{
+    display:table-cell;
+    vertical-align:middle;
+}
+
+.date-input {
+    position: relative;
+}
+
+.datetime-icon {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 18px;
+    line-height: 30px;
+    height: 30px;
+}
+
+.form-control[readonly] {
+    background: #fff;
+}
+
+.btn-group.pull-right > .dropdown-toggle:not(:first-child) {
+    border-radius: 3px;
+}
+
+.table-tool-btn, .dropdown-toggle.btn {
+    height: 28px;
+    padding: 0 8px;
+}
+
+.btn-group .search-input {
+    margin: 0 3px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+}
+
+.btn-group.pull-right .search-input-btn {
+    border-radius: 3px !important;
+}
+
+.checkbox input[type=checkbox],
+.radio input[type=radio] {
+    margin-top: 4px;
+}
+.has-error .control-label{
+    color:#a94442;
+}
+.has-error .form-control,.has-error .form-control:focus{
+    border-color:#a94442 !important;
+}
+.has-success .control-label{
+    color:#2b542c;
+}
+.has-success .form-control,.has-success .form-control:focus{
+    border-color:#2b542c !important;
+}
+.has-feedback .form-control{
+    padding-right:8px;
+}
+.form-horizontal .has-feedback .form-control-feedback{
+    right:-13px;
+}
