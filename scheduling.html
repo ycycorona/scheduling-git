@@ -88,9 +88,8 @@
     <div class="row">
         <div class="col-xs-2" >
             <div class="ui-widget-content external-event-box" id="tpl-wrap">
-                <class-tpl></class-tpl>
+                <class-tpl v-for="(item, index) in tplList" :tpl="item" :key="index"></class-tpl>
             </div>
-
         </div>
         <div class="col-xs-10">
             <div id='calendar'></div>
@@ -155,17 +154,17 @@
 <script src='resource/lib/layer/layer.js'></script>
 <script src='resource/lib/select2/js/select2.min.js'></script>
 <script type="x-template" id="class-tpl">
-        <div class="fc-content fc-event" v-bindDrag>
+        <div class="fc-content fc-event" v-bindDrag="tpl">
             <div class="box-wrap ">
                 <div class="no-margin item-wrap student">
-                    <span class="card-item">张民</span><span class="card-item">刘文杰</span>
+                    <span class="card-item" v-for="(item, index) in tpl.students" :key="index">{{item.name}}</span>
                 </div>
                 <div class="row no-margin item-wrap teacher inspector">
-                    <span class="card-item">刘坤</span><span class="card-item">徐凯</span>
-                    <span class="card-item">朱剑</span><span class="card-item">关禹</span>
+                    <span class="card-item" v-for="(item, index) in tpl.teachers" :key="index">{{item.name}}</span>
+                    <span class="card-item" v-for="(item, index) in tpl.inspectors" :key="index">{{item.name}}</span>
                 </div>
                 <div class="class-desc item-wrap log">
-                    <span class="card-item">3010743483660</span><span class="">外籍实践考试</span>
+                    <span>{{tpl.log}}</span>
                 </div>
             </div>
         </div>
@@ -173,17 +172,26 @@
 <script>
     $.fn.select2.defaults.set( "theme", "bootstrap" ); //使用select2-bootstrap主题
     moment.fn.toJSON = function() { return this.format()}; //处理时区的问题
+    //事件模板
     var classTpl = {
-        props:["menuItem","objKey","basePath","href"],
+        props:{
+            tpl: {
+                type: Object,
+                required: true,
+                default: {
+                    id: '1'
+                }
+            }
+        },
         template:'#class-tpl',
+
         methods:{
 
         },
         directives: {
             bindDrag: {
                 /*插入时绑定拖拽事件*/
-                inserted: function (el) {
-                    console.log('bindDrag');
+                inserted: function (el, binding) {
                     // make the event draggable using jQuery UI
                     $(el).draggable({
                         zIndex: 999,
@@ -192,10 +200,11 @@
                     });
                     // store data so the calendar knows to render an event upon drop
                     $(el).data('event', {
-                        title: 'test', // use the element's text as the event title
-                        id: Dateobj.eventsList[0].id,
+                        isDragFromExternal: true,
+                        title: 'test',
+                        id: binding.value.id,
+                        //id: Dateobj.eventsList[3].id,
                         duration: '01:00',
-                        editable: true,
                         stick: true // maintain when user navigates (see docs on the renderEvent method)
                     });
                 }
@@ -237,8 +246,10 @@
 
         }
     };
-    var classList; /*模拟的后台数据*/
-    var userList; /*模拟的人员数据*/
+    var classList = []; //模拟的后台数据 事件列表
+    var tplList = []; //模板列表
+    var tplListMap = {}; //模板列表
+    var userList = []; //模拟的人员数据
     /*远程获取数据*/
     $.ajax({
         type: "get",
@@ -247,7 +258,21 @@
         dataType: 'json',
         success: function (data) {
             classList = data;
-/*            console.log(classList);*/
+        }
+    });
+    var Dateobj = generateResourceArray(classList); /*通过远程获取的原始数据生成一个对象,包含event数组以及resource数组*/
+    var eventsList = Dateobj.eventsList; //事件列表
+    $.ajax({
+        type: "get",
+        async: false,
+        url: "mockData/tpl_list.json",
+        dataType: 'json',
+        success: function (data) {
+            tplList = data;
+            tplList.forEach(function (tpl, index, thisArray) {
+                tpl.id = parseInt(moment().format('x')) + eventsList.length; //用时间戳作为ID
+            }); //给刚加载的模板，设置id
+            tplListMap = getArrayMapById(tplList); //生成map
         }
     });
     /*生成模拟的人员数据*/
@@ -260,8 +285,6 @@
             userList = data;
         }
     });
-    var Dateobj = generateResourceArray(classList); /*通过远程获取的原始数据生成一个对象,包含event数组以及resource数组*/
-    var eventsList = Dateobj.eventsList; //事件列表
     var eventsListMap = getArrayMapById(eventsList); /*事件资源数组的map*/
     console.log(Dateobj, eventsListMap);
     var vueCon = new Vue({
@@ -270,7 +293,7 @@
             'class-tpl': classTpl
         },
         data: {
-            msg:'msg'
+            tplList: tplList
         }
     });
     $(document).ready(function () {
@@ -295,7 +318,7 @@
 
 
         });
-        /*生成resource和event数据*/
+        //日程表的配置
         var calendarOpt = {
             schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
             now: '2017-01-01', //当前时间
@@ -309,21 +332,22 @@
             },
             /*事件的点击事件*/
             eventClick: function(event, element) {
+                console.log(event);
                 openEditLayer(event, element); //打开编辑事件的弹窗
-
-                /*$('#calendar').fullCalendar( 'removeEventSource', 100)*/
             },
             /*日历内的事件拖拽*/
             eventDragStop: function (event, jsEvent, ui, view) {
                 /*console.log(jsEvent);*/
-
             },
             /*外部事件拖拽事件*/
             drop:function (date, jsEvent, ui, resourceId ) {
-                $(this).data().event.id = Dateobj.eventsList[3].id;
+                console.log(date, jsEvent, ui, resourceId);
+                //貌似此时设置id已经晚了
+                //$(this).data().event.id = Dateobj.eventsList[3].id;
             },
+            /*外部事件被接受事件*/
             eventReceive: function (event) {
-                console.log(event);
+
             },
             editable: true, //是否可以拖拽编辑duration、起始时间
             droppable: true, //是否可以放置事件
@@ -465,11 +489,31 @@
      * @params event $element view
      * */
     function eventRenderfun (event, $element, view) {
+        //console.log(event);
+        //如果是从模板拖拽进来的需要做额外处理
+        if (event.isDragFromExternal) {
+            var thisTpl = tplList[tplListMap[event.id]];
+            console.log(tplListMap, event.id);
+            var eventsListItem = {
+                id: thisTpl.id,
+                resourceId: parseInt(event.resourceId), //对应哪一个resource
+                start: moment(event.start.format()).format(),
+                end: moment(event.end.format()).format(),
+                title: event.title,
+                log: thisTpl.log,
+                students: thisTpl.students,
+                teachers: thisTpl.teachers,
+                inspectors: thisTpl.inspectors
+            };
+            addEventToEventsList(eventsListItem);
+            //重置模板的ID
+            thisTpl.id = parseInt(moment().format('x')) + eventsList.length; //用时间戳作为ID
+        }
         /*复制显示模板*/
         var $tpl = $("#template>.box-wrap").clone();
         /*获得事件的唯一id  event.id*/
         //插入学员
-        //console.log('eventRenderfun', event);
+        //console.log(Dateobj.eventsList[eventsListMap[event.id]]);
         Dateobj.eventsList[eventsListMap[event.id]].students.forEach(function (student, index, studentsArray) {
             var $student = $('<span class="card-item"> </span>');
             $student.text(student.name);
@@ -575,7 +619,7 @@
     }
     /**
      * @desc 打开layer编辑框
-     * @params start 开始事件 end 结束时间 resource 对应的resource
+     * @params
      */
     function openEditLayer (event, element) {
         layer.open({
@@ -659,10 +703,9 @@
                     teachers: teachers,
                     inspectors: inspectors
                 };
-                eventsList.push(eventsListItem);
+                eventsList.push(eventsListItem); //推入新事件
                 eventsListMap = getArrayMapById(eventsList);//重新生成map
-
-                /*删除事件*/
+                //删除事件
                 $('#calendar').fullCalendar( 'removeEvents', event.id); /*根据id删除事件*/
                 //添加事件
                 $('#calendar').fullCalendar( 'renderEvent', eventData , 'stick');
@@ -677,6 +720,15 @@
                 $('#select-inspectors').val(null);
             }
         });
+    }
+    /**
+     * @desc 向统一的事件库加入事件资源
+     * @param eventGeneObj {Object} 包含所有必须事件信息的对象
+     */
+    function addEventToEventsList (eventGeneObj) {
+        eventsList.push(eventGeneObj);
+        eventsListMap = getArrayMapById(eventsList);//重新生成map
+        tplListMap = getArrayMapById(tplList);
     }
 </script>
 </body>

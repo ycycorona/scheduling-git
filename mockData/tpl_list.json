@@ -1,0 +1,22 @@
+[
+  {
+    "id": "",
+    "students": [
+      {
+        "pCode": "1151",
+        "name": "张民"
+      },
+      {
+        "pCode": "1169",
+        "name": "刘文杰"
+      }
+    ],
+    "teachers": [
+
+    ],
+    "inspectors": [
+
+    ],
+    "log": "测试log"
+  }
+]
