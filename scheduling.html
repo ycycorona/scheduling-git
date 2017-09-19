@@ -92,6 +92,15 @@
         .tpl-hide {
             display: none;
         }
+
+        /*外部模板*/
+        #table0-toolbar{
+            margin-bottom: 10px;
+        }
+        .external-event-box .fc-content.fc-event{
+            padding: 5px 0;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body class="gray-bg">
@@ -115,7 +124,7 @@
                         title="添加">
                             <i class="fa fa-plus" aria-hidden="true"></i>
                         </button>
-                        <button type="button" class="btn btn-outline btn-default btn-edit" data-toggle="tooltip"
+<!--                        <button type="button" class="btn btn-outline btn-default btn-edit" data-toggle="tooltip"
                                 title="修改">
                             <i class="fa fa-edit" aria-hidden="true"></i>
                         </button>
@@ -126,11 +135,11 @@
                         <button type="button" class="btn btn-outline btn-default btn-refresh" data-toggle="tooltip"
                                 title="刷新">
                             <i class="fa fa-refresh" aria-hidden="true"></i>
-                        </button>
+                        </button>-->
                     </div>
                     <div class="ui-widget-content external-event-box" >
                         <class-tpl
-                        @click.native="openLayerEditTpl(item)"
+                        @dblclick.native="openLayerEditTpl(item)"
                         v-for="(item, index) in tplList"
                         :tpl="item"
                         :key="index"></class-tpl>
@@ -332,8 +341,10 @@
         success: function (data) {
             tplList = data;
             tplList.forEach(function (tpl, index, thisArray) {
-                tpl.id = parseInt(moment().format('x')) + eventsList.length; //用时间戳作为ID
+                tpl.id = parseInt(moment().format('x')) + index; //用时间戳作为ID
+                console.log(tpl.id);
             }); //给刚加载的模板，设置id
+
             tplListMap = getArrayMapById(tplList); //生成map
         }
     });
@@ -371,7 +382,7 @@
                 $('#diy-time-wrap').hide();
             }
         });
-        /*新建选择框初始化*/
+        /*新建选择框选择项目初始化*/
         $('#select-students').select2({
             placeholder: '选择学员',
             data:userList,
@@ -502,6 +513,11 @@
                 resourceObj.id = resCount;
                 resourceObj.date = classListByDate.date;
                 resourceObj.machineNO = classListByDateByMac.machineNO;
+                if (resCount%2==0) {
+                    resourceObj.eventColor = 'green';
+                } else {
+                    resourceObj.eventColor = '#3a87ad';
+                }
                 resourcesList.push(resourceObj);
                 //遍历每一天里每一台模拟机里的每一节课
                 classListByDateByMac.clas.forEach(function (classFinal, indexFinal, thisArrayFinal) {
@@ -574,7 +590,8 @@
             };
             addEventToEventsList(eventsListItem);
             //重置模板的ID
-            thisTpl.id = parseInt(moment().format('x')) + eventsList.length; //用时间戳作为ID
+            thisTpl.id = parseInt(moment().format('x')) + tplList.length; //用时间戳作为ID
+            //event.isDragFromExternal = false;
         }
         /*复制显示模板*/
         var $tpl = $("#template>.box-wrap").clone();
@@ -790,7 +807,7 @@
                 var inspectors = formatSelect2Result('#select-inspectors');
                 //向模板库加入模板资源，此时定义id
                 var TplListItem = {
-                    id: parseInt(moment().format('x')) + eventsList.length, //用时间戳作为ID
+                    id: parseInt(moment().format('x')) + tplList.length, //用时间戳作为ID
                     title: 'title',
                     log: $layDom.find('#input-log').val(),
                     students: students,
@@ -799,6 +816,19 @@
                 };
                 tplList.splice(tplList.length,0,TplListItem); //添加模板元素
                 tplListMap = getArrayMapById(tplList);//重新生成map
+
+                //向统一事件库加入事件资源
+/*                var eventsListItem = {
+                    id: TplListItem.id,
+                    resourceId: parseInt(resource.id), //对应哪一个resource
+                    start: moment(start.format()).format(), //日历上需要用的时间
+                    end: moment(end.format()).format(),
+                    title: 'title',
+                    log: $layDom.find('#input-log').val(),
+                    students: students,
+                    teachers: teachers,
+                    inspectors: inspectors
+                };*/
                 layer.close(layer.index);
             },
             content: $("#layer-body"),
@@ -858,9 +888,9 @@
             },
             /*删除按钮*/
             btn2: function (index, $layDom) {
-                $('#calendar').fullCalendar( 'removeEvents', event.id); /*根据id删除事件*/
-                eventsList.splice(eventsListMap[event.id], 1); //删除事件
-                eventsListMap = getArrayMapById(eventsList); //重新生成map
+                console.log(tplListMap[item.id]);
+                tplList.splice(tplListMap[item.id], 1); //删除tpl
+                tplListMap = getArrayMapById(tplList);//重新生成tpl map
             },
             content: $("#layer-body"),
             end: function () {
