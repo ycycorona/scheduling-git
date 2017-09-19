@@ -1,5 +1,6 @@
 [
   {
+    "isDiyClassTime": 0,
     "id": "",
     "students": [
       {
@@ -17,6 +18,26 @@
     "inspectors": [
 
     ],
-    "log": "测试log"
+    "log": "测试log1"
+  },
+  {
+    "isDiyClassTime": 0,
+    "id": "",
+    "students": [
+      {
+        "pCode": "1151",
+        "name": "张民"
+      }
+    ],
+    "teachers": [
+      {
+        "pCode": "1169",
+        "name": "刘文杰"
+      }
+    ],
+    "inspectors": [
+
+    ],
+    "log": "测试log2"
   }
 ]

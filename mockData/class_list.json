@@ -6,9 +6,9 @@
         "machineNO": "A320-1",
         "clas": [
           {
-            "session": 1,
-            "startTime": "08:00:00",
-            "endTime": "12:00:00",
+            "isDiyClassTime": 0,
+            "startTime": "09:00:00",
+            "endTime": "10:00:00",
             "classOrder": 1,
             "classDuration": {
               "hours": 2,
@@ -47,7 +47,7 @@
             "log": "保持经历熟练检查"
           },
           {
-            "session": 2,
+            "isDiyClassTime": 0,
             "startTime": "12:00:00",
             "endTime": "16:00:00",
             "classOrder": 3,
@@ -88,7 +88,7 @@
             "log": "熟练检查、李响B类教员评估"
           },
           {
-            "session": 2,
+            "isDiyClassTime": 0,
             "startTime": "16:00:00",
             "endTime": "20:00:00",
             "classOrder": 5,
@@ -129,7 +129,7 @@
             "log": "实践考试准备"
           },
           {
-            "session": 2,
+            "isDiyClassTime": 0,
             "startTime": "20:00:00",
             "endTime": "24:00:00",
             "classOrder": 7,
@@ -175,7 +175,7 @@
         "machineNO": "A320-2",
         "clas": [
           {
-            "session": 1,
+            "isDiyClassTime": 0,
             "startTime": "08:00:00",
             "endTime": "12:00:00",
             "classOrder": 1,
@@ -216,7 +216,7 @@
             "log": "外籍实践考试"
           },
           {
-            "session": 2,
+            "isDiyClassTime": 0,
             "startTime": "12:00:00",
             "endTime": "16:00:00",
             "classOrder": 3,
@@ -257,7 +257,7 @@
             "log": "复训"
           },
           {
-            "session": 2,
+            "isDiyClassTime": 0,
             "startTime": "16:00:00",
             "endTime": "20:00:00",
             "classOrder": 5,
