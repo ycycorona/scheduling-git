@@ -1,6 +1,7 @@
 [
   {
     "isDiyClassTime": 0,
+    "isDragFromExternal": true,
     "id": "",
     "students": [
       {
@@ -22,6 +23,7 @@
   },
   {
     "isDiyClassTime": 0,
+    "isDragFromExternal": true,
     "id": "",
     "students": [
       {

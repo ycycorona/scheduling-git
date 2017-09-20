@@ -101,6 +101,11 @@
             padding: 5px 0;
             margin-bottom: 10px;
         }
+        .orange-theme.active {
+            background-image: none;
+            background-color: orange;
+            color: #fff;
+        }
     </style>
 </head>
 <body class="gray-bg">
@@ -144,6 +149,9 @@
                         :tpl="item"
                         :key="index"></class-tpl>
                     </div>
+                    <button class="btn btn-default" type="button" id="data-package">
+                        数据打包
+                    </button>
                 </div>
             </div>
         </div>
@@ -205,9 +213,9 @@
     </form>
 </div>
 
-
 <!--模板区，复制用-->
 <div id="template" style="display: none">
+    <!--渲染每个事件用到的模板-->
     <div class="box-wrap ">
         <div class="no-margin item-wrap student">
 
@@ -229,8 +237,12 @@
 <script src='resource/lib/fullcalendar-scheduler/dist/scheduler.js'></script>
 <script src='resource/lib/layer/layer.js'></script>
 <script src='resource/lib/select2/js/select2.min.js'></script>
+<!--事件模板的vue component模板-->
 <script type="x-template" id="class-tpl">
-        <div class="fc-content fc-event" v-bindDrag="tpl">
+        <div
+        :data-event="dataEvent"
+        class="fc-content fc-event"
+        v-bindDrag="tpl">
             <div class="box-wrap ">
                 <div class="no-margin item-wrap student">
                     <span class="card-item" v-for="(item, index) in tpl.students" :key="index">{{item.name}}</span>
@@ -246,9 +258,10 @@
         </div>
 </script>
 <script>
+    /*插件参数重置*/
     $.fn.select2.defaults.set( "theme", "bootstrap" ); //使用select2-bootstrap主题
     moment.fn.toJSON = function() { return this.format()}; //处理时区的问题
-    //事件模板
+    //事件模板 vue component
     var classTpl = {
         props:{
             tpl: {
@@ -260,7 +273,21 @@
             }
         },
         template:'#class-tpl',
+        computed: {
+            //绑定data-event,拖拽到日历时用到的数据
+            dataEvent: function () {
+                var tmpObj = {
+                    title: 'test',
+                    id: this.tpl.id,
+                    duration: '01:00',
+                    stick: true
+                };
+                $(this.$el).data('event', tmpObj);
+                return JSON.stringify(tmpObj);
+            }
+        },
         methods:{
+
         },
         directives: {
             bindDrag: {
@@ -272,26 +299,21 @@
                         revert: true,      // will cause the event to go back to its
                         revertDuration: 0  //  original position after the drag
                     });
-                    // store data so the calendar knows to render an event upon drop
-                    $(el).data('event', {
-                        isDragFromExternal: true, //是否是外部的拖拽事件
-                        title: 'test',
-                        id: binding.value.id,
-                        //id: Dateobj.eventsList[3].id,
-                        duration: '01:00',
-                        stick: true // maintain when user navigates (see docs on the renderEvent method)
-                    });
                 }
             }
         }
     };
-    var thisDate = '2017-01-01'; //写死，因为不在日历插件里涉及日期
+    /*全局变量初始化*/
+    var thisDate = '2017-01-01'; //把fullcalendar的日期写死，因为不在日历插件里涉及日期
+    /*日历的配置文件 timeLineOpt控制日历的显示*/
+    /*此时代表 一天上4节大课，最多可分成8节小课*/
     var timeLineOpt = {
         minTime: {hours: 0, minutes: 0}, //开始时间
         maxTime: {hours: 8, minutes: 0}, //结束时间
         slotDuration: {hours:1, minutes:0}, //表格内部块，一个块代表几个小时，小课时长
         slotLabelInterval: {hours:2, minutes:0} //标题一个块代表几个小时， 大课时长
     };
+    /*实际业务逻辑*/
     var classOpt = {
         classNum:4, //课时数
         minClassNum: 8,  //每天最多的课时数
@@ -321,6 +343,7 @@
     var tplList = []; //模板列表
     var tplListMap = {}; //模板列表
     var userList = []; //模拟的人员数据
+    var eventDragFromExternal = {}; //事件是否还未拖拽入日历
     /*远程获取数据*/
     $.ajax({
         type: "get",
@@ -342,7 +365,7 @@
             tplList = data;
             tplList.forEach(function (tpl, index, thisArray) {
                 tpl.id = parseInt(moment().format('x')) + index; //用时间戳作为ID
-                console.log(tpl.id);
+                eventDragFromExternal[tpl.id] = true;
             }); //给刚加载的模板，设置id
 
             tplListMap = getArrayMapById(tplList); //生成map
@@ -359,7 +382,7 @@
         }
     });
     var eventsListMap = getArrayMapById(eventsList); /*事件资源数组的map*/
-    console.log(Dateobj, eventsListMap);
+    //console.log(Dateobj, eventsListMap);
     var vueCon = new Vue({
         el: '#tpl-wrap',
         components: {
@@ -408,29 +431,32 @@
             schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
             now: '2017-01-01', //当前时间
             selectable: true, //是否可以单击选择
-            selectHelper: true,
             eventOverlap: false, /*事件之间是否可以重叠*/
             /*空日历选择之后的回调函数*/
             select: function (start, end, jsEvent, view, resource) {
-                /*此处的start和end不带+08:00*/
+                /*此处的start和end不带+08:00，需要自己加上*/
                 openCreateLayer(start, end, resource); //打开新建事件的弹窗
             },
             /*事件的点击事件*/
             eventClick: function(event, element) {
-                console.log(event);
+                //console.log(event);
                 openEditLayer(event, element); //打开编辑事件的弹窗
             },
+            /*事件的鼠标进入事件*/
+            eventMouseover: eventMouseoverFun,
+            /*事件的鼠标出事件*/
+            eventMouseout: eventMouseoutFun,
             /*日历内的事件拖拽 改变start和end*/
             eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
-                console.log(changeEventTime(event));
+                //console.log(changeEventTime(event));
             },
             /*日历内的事件改变形状 改变start和end*/
             eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
-                console.log(changeEventTime(event));
+                //console.log(changeEventTime(event));
             },
             /*外部事件拖拽事件*/
             drop:function (date, jsEvent, ui, resourceId ) {
-                console.log(date, jsEvent, ui, resourceId);
+                //console.log(date, jsEvent, ui, resourceId);
                 //貌似此时设置id已经晚了
                 //$(this).data().event.id = Dateobj.eventsList[3].id;
             },
@@ -442,8 +468,14 @@
             droppable: true, //是否可以放置事件
             aspectRatio: 2, //宽高比
             resourceAreaWidth: '20%', /*左侧资源区的宽度*/
+            customButtons: { //自定义按钮
+                toggleClickMode: {
+                    text: '快速删除模式已关闭',
+                    click: toggleClickModeEvent
+                }
+            },
             header: {
-                left: '',
+                left: 'toggleClickMode',
                 center: '',
                 right: ''
             },
@@ -480,7 +512,8 @@
             resources: Dateobj.resourcesList,
             events: Dateobj.eventsList,
             /*事件挂载到dom之前的拦截编辑*/
-            eventRender: eventRenderfun
+            eventRender: eventRenderfun,
+            eventAfterAllRender: eventAfterRenderFun
         };
         $('#calendar').fullCalendar(calendarOpt);
         /*测试自定义表格头*/
@@ -490,7 +523,6 @@
             $dom.text(classOpt.classArrange[index].name);
             $(this).prepend($dom);
         });
-
     });
 
     /**
@@ -572,9 +604,10 @@
      * @params event $element view
      * */
     function eventRenderfun (event, $element, view) {
-        //console.log(event);
+        //console.log(event.id);
         //如果是从模板拖拽进来的需要做额外处理，把模板数组里的事件，加入到事件数组中，并重新生成模板的id
-        if (event.isDragFromExternal) {
+        if (eventDragFromExternal[event.id]) {
+            console.log(event);
             var thisTpl = tplList[tplListMap[event.id]];
             console.log(tplListMap, event.id);
             var eventsListItem = {
@@ -584,34 +617,43 @@
                 end: moment(event.end.format()).format(),
                 title: event.title,
                 log: thisTpl.log,
-                students: thisTpl.students,
-                teachers: thisTpl.teachers,
-                inspectors: thisTpl.inspectors
+                students: cloneObj(thisTpl.students),
+                teachers: cloneObj(thisTpl.teachers),
+                inspectors: cloneObj(thisTpl.inspectors)
             };
             addEventToEventsList(eventsListItem);
             //重置模板的ID
             thisTpl.id = parseInt(moment().format('x')) + tplList.length; //用时间戳作为ID
-            //event.isDragFromExternal = false;
+            tplListMap = getArrayMapById(tplList);//重新生成map
+            eventDragFromExternal[event.id] = false; //当前已经拖拽成功的外部事件拖拽标记为false
+            eventDragFromExternal[thisTpl.id] = true; //下一个外部事件拖拽标记为true
         }
         /*复制显示模板*/
         var $tpl = $("#template>.box-wrap").clone();
+        $tpl.data().id = event.id;
         //插入学员
         //console.log(Dateobj.eventsList[eventsListMap[event.id]]);
         Dateobj.eventsList[eventsListMap[event.id]].students.forEach(function (student, index, studentsArray) {
-            var $student = $('<span class="card-item"> </span>');
+            var $student = $('<span class="card-item student-item"> </span>');
             $student.text(student.name);
+            $student.data().pCode = student.pCode;
+            $student.data().userRole = 'students';
             $tpl.find('.student').append($student);
         });
         //插入老师
         Dateobj.eventsList[eventsListMap[event.id]].teachers.forEach(function (teacher, index, teachersArray) {
-            var $teacher = $('<span class="card-item"> </span>');
+            var $teacher = $('<span class="card-item teacher-item"> </span>');
             $teacher.text(teacher.name);
+            $teacher.data().pCode = teacher.pCode;
+            $teacher.data().userRole = 'teachers';
             $tpl.find('.teacher').append($teacher);
         });
         //插入检查员
         Dateobj.eventsList[eventsListMap[event.id]].inspectors.forEach(function (inspector, index, inspectorsArray) {
-            var $inspector = $('<span class="card-item"> </span>');
+            var $inspector = $('<span class="card-item inspector-item"> </span>');
             $inspector.text(inspector.name);
+            $inspector.data().pCode = inspector.pCode;
+            $inspector.data().userRole = 'inspectors';
             $tpl.find('.inspector').append($inspector);
         });
 /*        //插入id
@@ -622,8 +664,22 @@
         var $log = $('<span class=""> </span>');
         $log.text(Dateobj.eventsList[eventsListMap[event.id]].log);
         $tpl.find('.log').append($log);
-        $element.find(".fc-content>span.fc-title").remove(); //剔除fullcalendar默认的显示元素
-        $element.find(".fc-content").append($tpl); /*完成渲染元素的编辑*/
+        //剔除fullcalendar默认的显示元素
+        $element.find(".fc-content>span.fc-title").remove();
+        //完成渲染元素的编辑,挂在最终结果
+        $element.find(".fc-content").append($tpl);
+    }
+    /**
+     * @desc 所有的事件在日历上渲染完成
+     */
+    function eventAfterRenderFun(view) {
+        //由于重新渲染了事件，所以需要重新绑定人名点击事件
+        if($('.toggleClickModeButton').hasClass('orange-theme active')) {
+            if (!$._data($('#calendar .card-item')[0],'events')) {
+                console.log('重新绑定');
+                bindNameClickDel(); //绑定人名点击事件
+            }
+        }
     }
     /**
      * @desc 打开layer新建框 新建事件
@@ -676,7 +732,7 @@
                 }
                 eventsList.push(eventsListItem); //像资源库push新事件
                 eventsListMap = getArrayMapById(eventsList);//重新生成map
-                console.log(eventsListItem);
+                //console.log(eventsListItem);
                 //console.log($('#select-students').select2('data'));
                 //在日历上添加事件
                 $('#calendar').fullCalendar( 'renderEvent', eventData , 'stick');
@@ -812,23 +868,11 @@
                     log: $layDom.find('#input-log').val(),
                     students: students,
                     teachers: teachers,
-                    inspectors: inspectors
+                    inspectors: inspectors,
+                    isDragFromExternal: true //是否是外部的拖拽事件
                 };
                 tplList.splice(tplList.length,0,TplListItem); //添加模板元素
                 tplListMap = getArrayMapById(tplList);//重新生成map
-
-                //向统一事件库加入事件资源
-/*                var eventsListItem = {
-                    id: TplListItem.id,
-                    resourceId: parseInt(resource.id), //对应哪一个resource
-                    start: moment(start.format()).format(), //日历上需要用的时间
-                    end: moment(end.format()).format(),
-                    title: 'title',
-                    log: $layDom.find('#input-log').val(),
-                    students: students,
-                    teachers: teachers,
-                    inspectors: inspectors
-                };*/
                 layer.close(layer.index);
             },
             content: $("#layer-body"),
@@ -998,7 +1042,7 @@
         $('#is-diy-time').trigger('change');
     }
     /**
-     * @desc 把select2选出的项格式化
+     * @desc 把select2选出的项格式化 返回一个新的对象
      * @param selector {String} jquery id选择器
      * @returns {Array}
      */
@@ -1009,6 +1053,12 @@
                 pCode: obj.id
             }
         });
+    }
+    /**
+     * @desc 对象复制
+     */
+    function cloneObj(oldObj) {
+        return JSON.parse(JSON.stringify(oldObj))
     }
     /**
      * @desc 隐藏自定义事件选项
@@ -1023,6 +1073,80 @@
     function showInTpl() {
         $('#diy-time-control').show();
         $('#diy-time-wrap').show();
+    }
+    /**
+     * @desc 绑定人名点击事件
+     *
+     */
+    function bindNameClickDel() {
+        /*绑定人名的点击事件*/
+        $('#calendar .card-item').on('click.deleteEvent',function (event) {
+            console.log('eventclick事件触发');
+            var clickedNameDom = this;
+            editNameFromEvent(clickedNameDom); //从事件中删除点击的人
+            return false;
+        });
+    }
+    /**
+     * @desc 解绑人名点击事件
+     *
+     */
+    function unbindNameClickDel() {
+        /*解绑人名的点击事件*/
+        $('#calendar .card-item').off('click.deleteEvent');
+    }
+    /**
+     * @desc 切换人名点击删除模式
+     * @param event
+     */
+    function toggleClickModeEvent (event) {
+        //第一次点击、赋值为1，表示按钮状态激活
+        $(this).data().toogleStatus = $(this).data().toogleStatus ?
+            $(this).data().toogleStatus : 1 ;
+        if ($(this).data().toogleStatus == 1) {
+            $(this).addClass('orange-theme active toggleClickModeButton');
+            $(this).text('快速删除模式已激活');
+            $(this).data().toogleStatus = -1;
+            bindNameClickDel(); //绑定人名点击事件
+
+        } else {
+            $(this).removeClass('orange-theme active');
+            $(this).text('快速删除模式已关闭');
+            $(this).data().toogleStatus = 1;
+            unbindNameClickDel();  //解绑人名点击事件
+        }
+    }
+    /**
+     * @desc 通过点击人名 从事件中删除该成员
+     * @param {Object} 点击的dom
+     */
+    function editNameFromEvent(dom) {
+        var userRole = $(dom).data().userRole; //要修改人的身份
+        var pCode = $(dom).data().pCode; //要修改人的工号
+        var eventId = $(dom).parents().eq(1).data().id; //获得事件id
+        var matesList = eventsList[eventsListMap[eventId]][userRole]; //一起搬砖的工友数组
+        matesList.forEach(function (person, index, thisArray) {
+            if (person.pCode == pCode) {
+                thisArray.splice(index, 1); //删除对应的人
+            }
+        });
+        //删除成功、刷新日历
+        $('#calendar').fullCalendar( 'rerenderEvents' );
+    }
+    /**
+     * @desc 数据打包
+     * @param eventsList
+     */
+    function dataPackage(eventsList) {
+        $('#data-package').on('click',function (event) {
+            console.log(eventsList);
+        });
+    }
+    function eventMouseoverFun (event, jsEvent, view) {
+        console.log(event.id + 'in');
+    }
+    function eventMouseoutFun (event, jsEvent, view) {
+        console.log(event.id + 'out');
     }
 </script>
 </body>
