@@ -14,6 +14,7 @@
     <link rel='stylesheet' href='resource/lib/layer/skin/layer.css'/>
     <link rel='stylesheet' href='resource/lib/select2/css/select2.min.css'/>
     <link rel='stylesheet' href='resource/lib/select2/css/select2-bootstrap.min.css'/>
+    <link rel='stylesheet' href='resource/lib/bootstrap-datetimepicker/bootstrap-datetimepicker.css'/>
     <style>
         #calendar {
             width: 100%;
@@ -237,6 +238,8 @@
 <script src='resource/lib/fullcalendar-scheduler/dist/scheduler.js'></script>
 <script src='resource/lib/layer/layer.js'></script>
 <script src='resource/lib/select2/js/select2.min.js'></script>
+<script src='resource/lib/bootstrap-datetimepicker/bootstrap-datetimepicker.js'></script>
+<script src='resource/lib/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-CN.js'></script>
 <!--事件模板的vue component模板-->
 <script type="x-template" id="class-tpl">
         <div
@@ -245,11 +248,11 @@
         v-bindDrag="tpl">
             <div class="box-wrap ">
                 <div class="no-margin item-wrap student">
-                    <span class="card-item" v-for="(item, index) in tpl.students" :key="index">{{item.name}}</span>
+                    <span class="card-item person" v-for="(item, index) in tpl.students" :key="index">{{item.name}}</span>
                 </div>
                 <div class="row no-margin item-wrap teacher inspector">
-                    <span class="card-item" v-for="(item, index) in tpl.teachers" :key="index">{{item.name}}</span>
-                    <span class="card-item" v-for="(item, index) in tpl.inspectors" :key="index">{{item.name}}</span>
+                    <span class="card-item person" v-for="(item, index) in tpl.teachers" :key="index">{{item.name}}</span>
+                    <span class="card-item person" v-for="(item, index) in tpl.inspectors" :key="index">{{item.name}}</span>
                 </div>
                 <div class="class-desc item-wrap log">
                     <span>{{tpl.log}}</span>
@@ -305,6 +308,7 @@
     };
     /*全局变量初始化*/
     var thisDate = '2017-01-01'; //把fullcalendar的日期写死，因为不在日历插件里涉及日期
+    var layerTipIndex; //layer tip的index，close用
     /*日历的配置文件 timeLineOpt控制日历的显示*/
     /*此时代表 一天上4节大课，最多可分成8节小课*/
     var timeLineOpt = {
@@ -634,7 +638,7 @@
         //插入学员
         //console.log(Dateobj.eventsList[eventsListMap[event.id]]);
         Dateobj.eventsList[eventsListMap[event.id]].students.forEach(function (student, index, studentsArray) {
-            var $student = $('<span class="card-item student-item"> </span>');
+            var $student = $('<span class="card-item student-item person"> </span>');
             $student.text(student.name);
             $student.data().pCode = student.pCode;
             $student.data().userRole = 'students';
@@ -642,7 +646,7 @@
         });
         //插入老师
         Dateobj.eventsList[eventsListMap[event.id]].teachers.forEach(function (teacher, index, teachersArray) {
-            var $teacher = $('<span class="card-item teacher-item"> </span>');
+            var $teacher = $('<span class="card-item teacher-item person"> </span>');
             $teacher.text(teacher.name);
             $teacher.data().pCode = teacher.pCode;
             $teacher.data().userRole = 'teachers';
@@ -650,16 +654,16 @@
         });
         //插入检查员
         Dateobj.eventsList[eventsListMap[event.id]].inspectors.forEach(function (inspector, index, inspectorsArray) {
-            var $inspector = $('<span class="card-item inspector-item"> </span>');
+            var $inspector = $('<span class="card-item inspector-item person"> </span>');
             $inspector.text(inspector.name);
             $inspector.data().pCode = inspector.pCode;
             $inspector.data().userRole = 'inspectors';
             $tpl.find('.inspector').append($inspector);
         });
-/*        //插入id
-        var $id = $('<span class="card-item"> </span>');
-        $id.text('eventid' + event.id);
-        $tpl.find('.log').append($id);*/
+        //插入id
+        var $id = $('<span class="id"> </span>');
+        $id.text(event.id);
+        $tpl.find('.log').append($id);
         //插入log
         var $log = $('<span class=""> </span>');
         $log.text(Dateobj.eventsList[eventsListMap[event.id]].log);
@@ -675,7 +679,7 @@
     function eventAfterRenderFun(view) {
         //由于重新渲染了事件，所以需要重新绑定人名点击事件
         if($('.toggleClickModeButton').hasClass('orange-theme active')) {
-            if (!$._data($('#calendar .card-item')[0],'events')) {
+            if (!$._data($('#calendar .card-item.person')[0],'events')) {
                 console.log('重新绑定');
                 bindNameClickDel(); //绑定人名点击事件
             }
@@ -1080,7 +1084,7 @@
      */
     function bindNameClickDel() {
         /*绑定人名的点击事件*/
-        $('#calendar .card-item').on('click.deleteEvent',function (event) {
+        $('#calendar .card-item.person').on('click.deleteEvent',function (event) {
             console.log('eventclick事件触发');
             var clickedNameDom = this;
             editNameFromEvent(clickedNameDom); //从事件中删除点击的人
@@ -1093,7 +1097,7 @@
      */
     function unbindNameClickDel() {
         /*解绑人名的点击事件*/
-        $('#calendar .card-item').off('click.deleteEvent');
+        $('#calendar .card-item.person').off('click.deleteEvent');
     }
     /**
      * @desc 切换人名点击删除模式
@@ -1105,7 +1109,7 @@
             $(this).data().toogleStatus : 1 ;
         if ($(this).data().toogleStatus == 1) {
             $(this).addClass('orange-theme active toggleClickModeButton');
-            $(this).text('快速删除模式已激活');
+            $(this).text('快速删除模式已激活！');
             $(this).data().toogleStatus = -1;
             bindNameClickDel(); //绑定人名点击事件
 
@@ -1118,7 +1122,7 @@
     }
     /**
      * @desc 通过点击人名 从事件中删除该成员
-     * @param {Object} 点击的dom
+     * @param dom {Object} 点击的dom
      */
     function editNameFromEvent(dom) {
         var userRole = $(dom).data().userRole; //要修改人的身份
@@ -1142,11 +1146,45 @@
             console.log(eventsList);
         });
     }
+    /**
+     * @desc 鼠标移入事件时的回调函数
+     * @param event
+     * @param jsEvent
+     * @param view
+     */
     function eventMouseoverFun (event, jsEvent, view) {
-        console.log(event.id + 'in');
+        var thisEvent = eventsList[eventsListMap[event.id]];
+        //无自定义时间时，直接返回
+        if (!parseInt(thisEvent.isDiyClassTime)) {
+            return false;
+        }
+        var s = thisEvent.diyTimeStart;
+        var e = thisEvent.diyTimeEnd;
+        layerTipIndex = layer.tips('自定义时间' + s + '-' + e, jsEvent.target);
+        console.log(event.id + 'in' + layerTipIndex);
     }
+    /**
+     * @desc 鼠标移除事件时的回调函数
+     * @param event
+     * @param jsEvent
+     * @param view
+     */
     function eventMouseoutFun (event, jsEvent, view) {
-        console.log(event.id + 'out');
+        var thisEvent = eventsList[eventsListMap[event.id]];
+        //无自定义时间时，直接返回
+        if (!parseInt(thisEvent.isDiyClassTime)) {
+            return false;
+        }
+        layer.close(layerTipIndex);
+        console.log(event.id + 'out' + layerTipIndex);
+    }
+    /**
+     *
+     * @param event {Object} fullcalendar事件
+     */
+    function dateTimePickerInit (event) {
+        //var diy
+
     }
 </script>
 </body>
