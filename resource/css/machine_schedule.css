@@ -167,3 +167,8 @@ span.card-item {
     outline:none;
 
 }
+/*删除模板按钮*/
+.cancel-tpl:hover {
+    color: red;
+    cursor: pointer;
+}

@@ -29,7 +29,7 @@
                     <h5><i class="fa fa-pencil"></i>&nbsp;排班模板</h5>
                 </div>
                 <div class="ibox-content">
-                    <div class="btn-group" id="table0-toolbar" role="group">
+                    <div class="btn-group " id="table0-toolbar" role="group" >
                         <button
                         @click="vOpenLayerCreateTpl"
                         type="button"
@@ -56,6 +56,7 @@
                         @dblclick.native="openLayerEditTpl(item)"
                         v-for="(item, index) in tplList"
                         :tpl="item"
+                        :tpl-index="index"
                         :key="index"></class-tpl>
                     </div>
 
@@ -176,14 +177,18 @@
 <!--事件模板的 vue component-->
 <script type="x-template" id="class-tpl">
     <div class="row">
-        <div class="col-sm-3" :style="{height: rightHeight}">
-            <i class="fa fa-trash-o" style="font-size: 20px"></i>
+        <div class="col-sm-1" style="padding: 0" :style="{height: rightHeight + 'px'}">
+            <i
+            @click="cancelTpl(tpl)"
+            class="fa fa-trash-o cancel-tpl"
+            style="font-size: 16px;position: absolute;"
+            :style="{top: (rightHeight/2 - 10) + 'px', left: (leftWidth/2 - 8) + 'px'}"></i>
         </div>
         <div
             :data-event="dataEvent"
-            class="fc-content fc-event col-sm-9"
+            class="fc-content fc-event col-sm-11"
             v-bindDrag="tpl"
-            v-bindGetHeight>
+            v-bindGetHeight="tplIndex">
             <div class="box-wrap">
                 <div class="no-margin item-wrap student">
                     <span class="card-item person" v-for="(item, index) in tpl.students" :key="index">{{item.name}}</span>
@@ -204,6 +209,7 @@
     $.fn.select2.defaults.set( "theme", "bootstrap" ); //使用select2-bootstrap主题
     moment.fn.toJSON = function() { return this.format()}; //处理时区的问题
     //事件模板 vue component
+    var vueComponentsTplList = [];
     var classTpl = {
         props:{
             tpl: {
@@ -212,9 +218,16 @@
                 default: {
                     id: '1'
                 }
+            },
+            tplIndex: {
+                type: Number,
+                required: true
             }
         },
         template:'#class-tpl',
+        created: function () {
+            vueComponentsTplList.push(this);
+        },
         computed: {
             //绑定data-event,拖拽到日历时用到的数据
             dataEvent: function () {
@@ -230,12 +243,15 @@
         },
         data:function () {
           return{
-              rightHeight: 0
+              msg:'test',
+              rightHeight: 0, //右侧的高度
+              leftWidth: 0
           }
         },
         methods:{
-            getHeight: function () {
-
+            cancelTpl: function (tpl) {
+                tplList.splice(tplListMap[tpl.id], 1); //删除tpl
+                tplListMap = getArrayMapById(tplList);//重新生成tpl map
             }
         },
         directives: {
@@ -252,15 +268,18 @@
             },
             bindGetHeight: {
                 inserted: function (el, binding) {
-                    //classTpl.data().rightHeight = $(el).outerHeight();
-                    console.log(this);
+                    var _this = vueComponentsTplList[binding.value];
+                    _this.rightHeight = $(el).outerHeight();
+                    _this.leftWidth = $(el).prev().innerWidth();
+                    console.log(_this.rightHeight);
                 },
                 update: function (el, binding) {
                     setTimeout(function () {
-                        //
-                        //classTpl.data().rightHeight = $(el).outerHeight();
+                        var _this = vueComponentsTplList[binding.value];
+                        _this.rightHeight = $(el).outerHeight();
+                        _this.leftWidth = $(el).prev().innerWidth();
+                        console.log(_this.rightHeight);
                     },500);
-
                 }
             }
         }
@@ -1171,9 +1190,9 @@
     }
     /**
      * @desc 激活时间选择器
-     * @param event {Object} fullcalendar事件
+     *
      */
-    function dateTimePickerInit (event) {
+    function dateTimePickerInit () {
         //var diy
         $('#class-time-start').clockpicker({
             autoclose: 1
