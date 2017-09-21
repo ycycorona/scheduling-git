@@ -131,11 +131,16 @@ span.card-item {
     padding: 5px 0;
     margin-bottom: 10px;
 }
-
-.orange-theme.active {
+.fc-toggleClickMode-button{
+    letter-spacing: 0.1rem;
+    text-shadow: none;
+}
+.fc-toggleClickMode-button.orange-theme.active {
     background-image: none;
-    background-color: orange;
+    background-color: #5cb85c;
     color: #fff;
+    letter-spacing: 0.1rem;
+    text-shadow: none;
 }
 
 .user-help {

@@ -173,18 +173,18 @@
 <script src='resource/lib/select2/js/select2.min.js'></script>
 <script src='resource/lib/clockpicker/jquery-clockpicker.min.js'></script>
 <script src='resource/lib/clockpicker/bootstrap-clockpicker.min.js'></script>
-
-<!--事件模板的vue component模板-->
+<!--事件模板的 vue component-->
 <script type="x-template" id="class-tpl">
     <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-3" :style="{height: rightHeight}">
             <i class="fa fa-trash-o" style="font-size: 20px"></i>
         </div>
         <div
             :data-event="dataEvent"
             class="fc-content fc-event col-sm-9"
-            v-bindDrag="tpl">
-            <div class="box-wrap ">
+            v-bindDrag="tpl"
+            v-bindGetHeight>
+            <div class="box-wrap">
                 <div class="no-margin item-wrap student">
                     <span class="card-item person" v-for="(item, index) in tpl.students" :key="index">{{item.name}}</span>
                 </div>
@@ -228,8 +228,15 @@
                 return JSON.stringify(tmpObj);
             }
         },
+        data:function () {
+          return{
+              rightHeight: 0
+          }
+        },
         methods:{
+            getHeight: function () {
 
+            }
         },
         directives: {
             bindDrag: {
@@ -241,6 +248,19 @@
                         revert: true,      // will cause the event to go back to its
                         revertDuration: 0  //  original position after the drag
                     });
+                }
+            },
+            bindGetHeight: {
+                inserted: function (el, binding) {
+                    //classTpl.data().rightHeight = $(el).outerHeight();
+                    console.log(this);
+                },
+                update: function (el, binding) {
+                    setTimeout(function () {
+                        //
+                        //classTpl.data().rightHeight = $(el).outerHeight();
+                    },500);
+
                 }
             }
         }
