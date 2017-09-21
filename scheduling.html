@@ -14,111 +14,19 @@
     <link rel='stylesheet' href='resource/lib/layer/skin/layer.css'/>
     <link rel='stylesheet' href='resource/lib/select2/css/select2.min.css'/>
     <link rel='stylesheet' href='resource/lib/select2/css/select2-bootstrap.min.css'/>
-    <link rel='stylesheet' href='resource/lib/bootstrap-datetimepicker/bootstrap-datetimepicker.css'/>
-    <style>
-        #calendar {
-            width: 100%;
-
-        }
-        #tpl-wrap {
-            margin: auto;
-        }
-/*        #calendar .fc-timeline-event {
-            height: 100%;
-            min-height: 200px;
-        }*/
-
-        .no-padding {
-            padding: 0;
-        }
-
-        .no-margin {
-            margin: 0;
-        }
-
-        .item-wrap > .card-item {
-            background-color: #9d9d9d;
-            padding: 2px 2px;
-            margin: 2px 2px;
-        }
-
-        .box-wrap > div {
-            text-align: center;
-
-        }
-
-        /*除了最后一个，加点线*/
-        .box-wrap > div:not(.class-desc) {
-            margin-bottom: 5px;
-            border-bottom: 1px #ddd dashed;
-            padding-bottom: 5px;
-        }
-
-        /*时间块里面文字自动换行*/
-        .fc-timeline-event .fc-content {
-            white-space: normal;
-            line-height: 2;
-
-        }
-
-        /*人名不分行*/
-        .fc-timeline-event .fc-content span.card-item {
-            /*word-break: keep-all;*/
-        }
-
-        #delete-box,#test-box {
-            height: 200px;
-            background-color: #9d9d9d;
-            line-height: 200px;
-            text-align: center
-        }
-        .ui-state-highlight{
-            background-color: #1b6d85;
-        }
-        .ui-state-hover{
-            background-color: red;
-        }
-        .ui-state-active{
-            background-color: orange;
-        }
-        .fc-chrono .fc-cell-content.border-bottom {
-            border-bottom: 1px solid #ddd;
-        }
-        .fc-ltr .fc-time-area .fc-chrono th {
-            text-align: center;
-        }
-        .margin-top {
-            margin-top: 50px;
-        }
-        .tpl-hide {
-            display: none;
-        }
-
-        /*外部模板*/
-        #table0-toolbar{
-            margin-bottom: 10px;
-        }
-        .external-event-box .fc-content.fc-event{
-            padding: 5px 0;
-            margin-bottom: 10px;
-        }
-        .orange-theme.active {
-            background-image: none;
-            background-color: orange;
-            color: #fff;
-        }
-    </style>
+    <link rel='stylesheet' href='resource/lib/clockpicker/bootstrap-clockpicker.min.css'/>
+    <link rel='stylesheet' href='resource/css/machine_schedule.css'/>
 </head>
 <body class="gray-bg">
 <div class="container">
     <div class="margin-top"></div>
     <div class="row">
         <!--模板放置区-->
-        <div class="col-xs-2" >
+        <div class="col-xs-3" >
             <!--vue control-->
             <div class="ibox float-e-margins" id="tpl-wrap">
                 <div class="ibox-title ibox-title-blue">
-                    <h5><i class="fa fa-pencil"></i>&nbsp;排课模板</h5>
+                    <h5><i class="fa fa-pencil"></i>&nbsp;排班模板</h5>
                 </div>
                 <div class="ibox-content">
                     <div class="btn-group" id="table0-toolbar" role="group">
@@ -150,14 +58,27 @@
                         :tpl="item"
                         :key="index"></class-tpl>
                     </div>
-                    <button class="btn btn-default" type="button" id="data-package">
-                        数据打包
-                    </button>
+
                 </div>
             </div>
+            <div class="user-help">
+                <p>一、</p>
+                <p>1、双击上方的每个模板，可以编辑、删除模板。</p>
+                <p>2、点击上方的<i aria-hidden="true" class="fa fa-plus"></i>，可以添加新模板。</p>
+                <p>3、模板拖拽到排班表中，可以生成新课程。</p>
+                <p>二、</p>
+                <p>1、拖拽每个课程到排班表的不同位置，可以指定课程的时间</p>
+                <p>2、单击排班表中的空白方块，可以添加新的课程。</p>
+                <p>3、排班表单击每个课程，可以编辑参加课程的学员、教员、检查员、并且可以在有特殊需求时，自行调整上课时间</p>
+                <p>4、每个自定义了上课时间的课程上鼠标悬浮，会提示自定义时间</p>
+                <p>5、激活快速删除模式，点击人名可以把该人从课程中删除</p>
+            </div>
+            <button class="btn btn-default" type="button" id="data-package">
+                get data
+            </button>
         </div>
         <!--排班表放置区-->
-        <div class="col-xs-10">
+        <div class="col-xs-9">
             <div class="ibox float-e-margins">
                 <div class="ibox-title ibox-title-blue">
                     <h5><i class="fa fa-pencil"></i>&nbsp;排班表</h5>
@@ -173,42 +94,54 @@
 <div class="wrapper wrapper-content layer-body" id="layer-body" style="display:none;">
     <form class="form-horizontal" id="">
         <div class="form-group">
-            <label class="col-sm-4 control-label">学员<font color='red'>*</font>:
-            </label>
-            <div class="col-sm-6">
+            <label class="col-sm-3 control-label">学员</label>
+            <div class="col-sm-7">
                 <select id="select-students"></select>
             </div>
         </div>
         <div class="form-group">
-            <label  class="col-sm-4 control-label">教员</label>
-            <div class="text-left col-sm-6">
+            <label  class="col-sm-3 control-label">教员</label>
+            <div class="text-left col-sm-7">
                 <select id="select-teachers"></select>
             </div>
         </div>
         <div class="form-group">
-            <label  class="col-sm-4 control-label">检查员</label>
-            <div class="text-left col-sm-6">
+            <label  class="col-sm-3 control-label">检查员</label>
+            <div class="text-left col-sm-7">
                 <select id="select-inspectors"></select>
             </div>
         </div>
         <div class="form-group">
-            <label  class="col-sm-4 control-label">备注</label>
-            <div class="text-left col-sm-6">
+            <label  class="col-sm-3 control-label">备注</label>
+            <div class="text-left col-sm-7">
                 <textarea class="form-control" id="input-log" rows="3"></textarea>
             </div>
         </div>
         <div class="form-group" id="diy-time-control">
-            <div class="text-left col-sm-6 col-sm-offset-4">
+            <div class="text-left col-sm-7 col-sm-offset-3">
                 <label>
                     <input type="checkbox" id="is-diy-time">自定义课程时间
                 </label>
             </div>
         </div>
         <div class="form-group" id="diy-time-wrap" style="display: none">
-            <label  class="col-sm-4 control-label">自定义课程时间</label>
-            <div class="text-left col-sm-6">
-                <input type="text"  id="class-time-start" name="class-time-start" class="form-control" />-
-                <input type="text"  id="class-time-end" name="class-time-end" class="form-control" />
+            <label  class="col-sm-1 col-sm-offset-2 control-label">起：</label>
+            <div class="text-left col-sm-3">
+                <div class="input-group clockpicker">
+                    <input type="text" class="form-control" id="class-time-start" name="class-time-start">
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+            </div>
+            <label  class="col-sm-1 control-label">始：</label>
+            <div class="text-left col-sm-3">
+                <div class="input-group clockpicker">
+                    <input type="text" class="form-control" id="class-time-end" name="class-time-end">
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
             </div>
         </div>
     </form>
@@ -238,14 +171,19 @@
 <script src='resource/lib/fullcalendar-scheduler/dist/scheduler.js'></script>
 <script src='resource/lib/layer/layer.js'></script>
 <script src='resource/lib/select2/js/select2.min.js'></script>
-<script src='resource/lib/bootstrap-datetimepicker/bootstrap-datetimepicker.js'></script>
-<script src='resource/lib/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-CN.js'></script>
+<script src='resource/lib/clockpicker/jquery-clockpicker.min.js'></script>
+<script src='resource/lib/clockpicker/bootstrap-clockpicker.min.js'></script>
+
 <!--事件模板的vue component模板-->
 <script type="x-template" id="class-tpl">
+    <div class="row">
+        <div class="col-sm-3">
+            <i class="fa fa-trash-o" style="font-size: 20px"></i>
+        </div>
         <div
-        :data-event="dataEvent"
-        class="fc-content fc-event"
-        v-bindDrag="tpl">
+            :data-event="dataEvent"
+            class="fc-content fc-event col-sm-9"
+            v-bindDrag="tpl">
             <div class="box-wrap ">
                 <div class="no-margin item-wrap student">
                     <span class="card-item person" v-for="(item, index) in tpl.students" :key="index">{{item.name}}</span>
@@ -259,6 +197,7 @@
                 </div>
             </div>
         </div>
+    </div>
 </script>
 <script>
     /*插件参数重置*/
@@ -318,6 +257,12 @@
         slotLabelInterval: {hours:2, minutes:0} //标题一个块代表几个小时， 大课时长
     };
     /*实际业务逻辑*/
+    var displayOpt ={
+        //resourceColor_1: 'rgb(81, 183, 73)', 绿色
+        //resourceColor_2: 'rgb(164, 189, 252)' 蓝色
+        resourceColor_1: '#3b91ad', //蓝色
+        resourceColor_2: '#3b91ad' //蓝色
+    };
     var classOpt = {
         classNum:4, //课时数
         minClassNum: 8,  //每天最多的课时数
@@ -342,7 +287,7 @@
                 time: '20:45-00:45'
             }
         ]
-    };
+    }; //课程选项
     var classList = []; //模拟的后台数据 事件列表
     var tplList = []; //模板列表
     var tplListMap = {}; //模板列表
@@ -425,6 +370,8 @@
             data:userList,
             multiple: true
         });
+        /*时间选择器初始化*/
+        dateTimePickerInit();
         /*生成模板*/
         $(".external-event-box>.fc-event").each(function() {
 
@@ -519,14 +466,15 @@
             eventRender: eventRenderfun,
             eventAfterAllRender: eventAfterRenderFun
         };
+        //初始化排班表
         $('#calendar').fullCalendar(calendarOpt);
-        /*测试自定义表格头*/
-        $('.fc-chrono .fc-widget-header').each(function (index) {
-            $(this).find('.fc-cell-text').text(classOpt.classArrange[index].time);
-            var $dom = $('<div class="fc-cell-content border-bottom"></div>');
-            $dom.text(classOpt.classArrange[index].name);
-            $(this).prepend($dom);
-        });
+
+        //按钮时间绑定
+        dataPackage();
+        /*自定义表格头*/
+        diyTableHeader(classOpt);
+
+
     });
 
     /**
@@ -550,9 +498,9 @@
                 resourceObj.date = classListByDate.date;
                 resourceObj.machineNO = classListByDateByMac.machineNO;
                 if (resCount%2==0) {
-                    resourceObj.eventColor = 'green';
+                    resourceObj.eventColor = displayOpt.resourceColor_1;
                 } else {
-                    resourceObj.eventColor = '#3a87ad';
+                    resourceObj.eventColor = displayOpt.resourceColor_2;
                 }
                 resourcesList.push(resourceObj);
                 //遍历每一天里每一台模拟机里的每一节课
@@ -608,7 +556,10 @@
      * @params event $element view
      * */
     function eventRenderfun (event, $element, view) {
-        //console.log(event.id);
+        console.log('event.id', event.id);
+        console.log('eventsList',eventsList);
+        console.log('eventDragFromExternal',eventDragFromExternal);
+
         //如果是从模板拖拽进来的需要做额外处理，把模板数组里的事件，加入到事件数组中，并重新生成模板的id
         if (eventDragFromExternal[event.id]) {
             console.log(event);
@@ -634,10 +585,10 @@
         }
         /*复制显示模板*/
         var $tpl = $("#template>.box-wrap").clone();
-        $tpl.data().id = event.id;
+        $tpl.data().id = event.id; // .box-wrap dom上加了个data属性。
+        var thisClassEvent = eventsList[eventsListMap[event.id]]; //当前正在处理的课程
         //插入学员
-        //console.log(Dateobj.eventsList[eventsListMap[event.id]]);
-        Dateobj.eventsList[eventsListMap[event.id]].students.forEach(function (student, index, studentsArray) {
+        thisClassEvent.students.forEach(function (student, index, studentsArray) {
             var $student = $('<span class="card-item student-item person"> </span>');
             $student.text(student.name);
             $student.data().pCode = student.pCode;
@@ -645,7 +596,7 @@
             $tpl.find('.student').append($student);
         });
         //插入老师
-        Dateobj.eventsList[eventsListMap[event.id]].teachers.forEach(function (teacher, index, teachersArray) {
+        thisClassEvent.teachers.forEach(function (teacher, index, teachersArray) {
             var $teacher = $('<span class="card-item teacher-item person"> </span>');
             $teacher.text(teacher.name);
             $teacher.data().pCode = teacher.pCode;
@@ -653,11 +604,15 @@
             $tpl.find('.teacher').append($teacher);
         });
         //插入检查员
-        Dateobj.eventsList[eventsListMap[event.id]].inspectors.forEach(function (inspector, index, inspectorsArray) {
+        thisClassEvent.inspectors.forEach(function (inspector, index, inspectorsArray) {
             var $inspector = $('<span class="card-item inspector-item person"> </span>');
             $inspector.text(inspector.name);
             $inspector.data().pCode = inspector.pCode;
             $inspector.data().userRole = 'inspectors';
+            if (index==0) {
+                //todo 第一个inspector加更多左margin
+                $inspector.css('margin-left', '8px');
+            }
             $tpl.find('.inspector').append($inspector);
         });
         //插入id
@@ -666,12 +621,17 @@
         $tpl.find('.log').append($id);
         //插入log
         var $log = $('<span class=""> </span>');
-        $log.text(Dateobj.eventsList[eventsListMap[event.id]].log);
+        $log.text(thisClassEvent.log);
         $tpl.find('.log').append($log);
+        //如果自定义了时间，插入时间标记 isDiyClassTime=0 or 1
+        if (thisClassEvent.isDiyClassTime) {
+            var $timeNotice = $('<i class="fa fa-exclamation time-notice" aria-hidden="true"></i>');
+        }
         //剔除fullcalendar默认的显示元素
         $element.find(".fc-content>span.fc-title").remove();
         //完成渲染元素的编辑,挂在最终结果
         $element.find(".fc-content").append($tpl);
+        $element.find(".fc-content").append($timeNotice);
     }
     /**
      * @desc 所有的事件在日历上渲染完成
@@ -695,7 +655,7 @@
             type: 1,
             skin: '', //样式类名
             zIndex: 800,
-            area: ['500px',''],
+            area: ['550px',''],
             btn:["保存","取消"],
             success:function($layDom){
                 //重置表单
@@ -756,11 +716,11 @@
      */
     function openEditLayer (event, element) {
         layer.open({
-            title: '编辑',
+            title: '编辑课程',
             type: 1,
             skin: '', //样式类名
             zIndex: 800,
-            area: ['500px',''],
+            area: ['550px',''],
             btn:["保存", "删除", "取消"],
             success:function($layDom){
                 //重置select2、以及表单
@@ -852,7 +812,7 @@
             type: 1,
             skin: '', //样式类名
             zIndex: 800,
-            area: ['500px',''],
+            area: ['550px',''],
             btn:["保存", "取消"],
             success:function($layDom){
                 //重置select2、以及表单
@@ -872,11 +832,12 @@
                     log: $layDom.find('#input-log').val(),
                     students: students,
                     teachers: teachers,
-                    inspectors: inspectors,
-                    isDragFromExternal: true //是否是外部的拖拽事件
+                    inspectors: inspectors
+                    //isDragFromExternal: true是否是外部的拖拽事件
                 };
                 tplList.splice(tplList.length,0,TplListItem); //添加模板元素
                 tplListMap = getArrayMapById(tplList);//重新生成map
+                eventDragFromExternal[TplListItem.id] = true; //是否是外部拖拽事件
                 layer.close(layer.index);
             },
             content: $("#layer-body"),
@@ -898,7 +859,7 @@
             type: 1,
             skin: '', //样式类名
             zIndex: 800,
-            area: ['500px',''],
+            area: ['550px',''],
             btn:["保存", "删除", "取消"],
             success:function($layDom){
                 //重置select2、以及表单
@@ -1141,9 +1102,12 @@
      * @desc 数据打包
      * @param eventsList
      */
-    function dataPackage(eventsList) {
+    function dataPackage() {
         $('#data-package').on('click',function (event) {
-            console.log(eventsList);
+            console.log('eventsList', eventsList);
+            console.log('eventsListMap', eventsListMap);
+            console.log('tplList', tplList);
+            console.log('tplListMap', tplListMap);
         });
     }
     /**
@@ -1153,14 +1117,21 @@
      * @param view
      */
     function eventMouseoverFun (event, jsEvent, view) {
+        console.log(jsEvent.currentTarget);
         var thisEvent = eventsList[eventsListMap[event.id]];
-        //无自定义时间时，直接返回
-        if (!parseInt(thisEvent.isDiyClassTime)) {
-            return false;
+        var timeInfo = '';
+        //无自定义时间时不显示时间信息
+        if (parseInt(thisEvent.isDiyClassTime)) {
+            var s = thisEvent.diyTimeStart;
+            var e = thisEvent.diyTimeEnd;
+            timeInfo = '自定义时间：' + s + '-' + e + '<br>';
         }
-        var s = thisEvent.diyTimeStart;
-        var e = thisEvent.diyTimeEnd;
-        layerTipIndex = layer.tips('自定义时间' + s + '-' + e, jsEvent.target);
+        layerTipIndex = layer.tips(timeInfo  + '备注：' + thisEvent.log, jsEvent.currentTarget, {
+            tips: [1,'white'],
+            time: 0,
+            skin: 'white-tip',
+            area: ['200px']
+        });
         console.log(event.id + 'in' + layerTipIndex);
     }
     /**
@@ -1172,19 +1143,37 @@
     function eventMouseoutFun (event, jsEvent, view) {
         var thisEvent = eventsList[eventsListMap[event.id]];
         //无自定义时间时，直接返回
-        if (!parseInt(thisEvent.isDiyClassTime)) {
+        /*if (!parseInt(thisEvent.isDiyClassTime)) {
             return false;
-        }
+        }*/
         layer.close(layerTipIndex);
         console.log(event.id + 'out' + layerTipIndex);
     }
     /**
-     *
+     * @desc 激活时间选择器
      * @param event {Object} fullcalendar事件
      */
     function dateTimePickerInit (event) {
         //var diy
-
+        $('#class-time-start').clockpicker({
+            autoclose: 1
+        });
+        $('#class-time-end').clockpicker({
+            autoclose: 1
+        });
+    }
+    /**
+     * @desc 自定义排班表的表头，并删除原来的
+     * */
+    function diyTableHeader(classOpt) {
+        $('.fc-chrono .fc-widget-header').each(function (index) {
+            $(this).find('.fc-cell-text').text(classOpt.classArrange[index].time);
+            var $dom = $('<div class="fc-cell-content border-bottom"></div>');
+            $dom.text(classOpt.classArrange[index].name);
+            $(this).prepend($dom);
+        });
+        //自定义表头结束后，激活resize事件，使表头对其
+        $(window).trigger('resize');
     }
 </script>
 </body>
