@@ -18,11 +18,11 @@
     <link rel='stylesheet' href='resource/css/machine_schedule.css'/>
 </head>
 <body class="gray-bg">
-<div class="container">
+<div class="no-margin-container">
     <div class="margin-top"></div>
     <div class="row">
         <!--模板放置区-->
-        <div class="col-xs-3" >
+        <div class="col-xs-2" >
             <!--vue control-->
             <div class="ibox float-e-margins" id="tpl-wrap">
                 <div class="ibox-title ibox-title-blue">
@@ -79,7 +79,7 @@
             </button>
         </div>
         <!--排班表放置区-->
-        <div class="col-xs-9">
+        <div class="col-xs-10">
             <div class="ibox float-e-margins">
                 <div class="ibox-title ibox-title-blue">
                     <h5><i class="fa fa-pencil"></i>&nbsp;排班表</h5>
@@ -128,8 +128,8 @@
         <div class="form-group" id="diy-time-wrap" style="display: none">
             <label  class="col-sm-1 col-sm-offset-2 control-label">起：</label>
             <div class="text-left col-sm-3">
-                <div class="input-group clockpicker">
-                    <input type="text" class="form-control" id="class-time-start" name="class-time-start">
+                <div class="input-group clockpicker" id="class-time-start">
+                    <input type="text" class="form-control"  name="class-time-start">
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-time"></span>
                     </span>
@@ -137,8 +137,8 @@
             </div>
             <label  class="col-sm-1 control-label">始：</label>
             <div class="text-left col-sm-3">
-                <div class="input-group clockpicker">
-                    <input type="text" class="form-control" id="class-time-end" name="class-time-end">
+                <div class="input-group clockpicker" id="class-time-end">
+                    <input type="text" class="form-control"  name="class-time-end">
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-time"></span>
                     </span>
@@ -177,7 +177,7 @@
 <!--事件模板的 vue component-->
 <script type="x-template" id="class-tpl">
     <div class="row">
-        <div class="col-sm-1" style="padding: 0" :style="{height: rightHeight + 'px'}">
+        <div class="col-xs-1" style="padding: 0" :style="{height: rightHeight + 'px'}">
             <i
             @click="cancelTpl(tpl)"
             class="fa fa-trash-o cancel-tpl"
@@ -186,16 +186,16 @@
         </div>
         <div
             :data-event="dataEvent"
-            class="fc-content fc-event col-sm-11"
+            class="fc-content fc-event col-xs-11"
             v-bindDrag="tpl"
             v-bindGetHeight="tplIndex">
             <div class="box-wrap">
                 <div class="no-margin item-wrap student">
-                    <span class="card-item person" v-for="(item, index) in tpl.students" :key="index">{{item.name}}</span>
+                    <span class="card-item person student-item" v-for="(item, index) in tpl.students" :key="index">{{item.name}}</span>
                 </div>
                 <div class="row no-margin item-wrap teacher inspector">
-                    <span class="card-item person" v-for="(item, index) in tpl.teachers" :key="index">{{item.name}}</span>
-                    <span class="card-item person" v-for="(item, index) in tpl.inspectors" :key="index">{{item.name}}</span>
+                    <span class="card-item person teacher-item" v-for="(item, index) in tpl.teachers" :key="index">{{item.name}}</span>
+                    <span class="card-item person inspector-item" v-for="(item, index) in tpl.inspectors" :key="index">{{item.name}}</span>
                 </div>
                 <div class="class-desc item-wrap log">
                     <span>{{tpl.log}}</span>
@@ -271,14 +271,12 @@
                     var _this = vueComponentsTplList[binding.value];
                     _this.rightHeight = $(el).outerHeight();
                     _this.leftWidth = $(el).prev().innerWidth();
-                    console.log(_this.rightHeight);
                 },
                 update: function (el, binding) {
                     setTimeout(function () {
                         var _this = vueComponentsTplList[binding.value];
                         _this.rightHeight = $(el).outerHeight();
                         _this.leftWidth = $(el).prev().innerWidth();
-                        console.log(_this.rightHeight);
                     },500);
                 }
             }
@@ -354,6 +352,7 @@
             tplList.forEach(function (tpl, index, thisArray) {
                 tpl.id = parseInt(moment().format('x')) + index; //用时间戳作为ID
                 eventDragFromExternal[tpl.id] = true;
+                //console.log('tpl.id ' + tpl.id );
             }); //给刚加载的模板，设置id
 
             tplListMap = getArrayMapById(tplList); //生成map
@@ -411,11 +410,6 @@
         });
         /*时间选择器初始化*/
         dateTimePickerInit();
-        /*生成模板*/
-        $(".external-event-box>.fc-event").each(function() {
-
-
-        });
         //日程表的配置
         var calendarOpt = {
             schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
@@ -491,19 +485,19 @@
                     group: true,
                     labelText: '日期',
                     field: 'date',
-                    width: '60%'
+                    width: '50%'
                 },
                 {
                     labelText: '模拟机号',
                     field: 'machineNO',
-                    width: '40%'
+                    width: '50%'
                 }
             ],
             resources: Dateobj.resourcesList,
             events: Dateobj.eventsList,
             /*事件挂载到dom之前的拦截编辑*/
             eventRender: eventRenderfun,
-            eventAfterAllRender: eventAfterRenderFun
+            eventAfterAllRender: eventAfterRenderFun //所有事件渲染完成
         };
         //初始化排班表
         $('#calendar').fullCalendar(calendarOpt);
@@ -563,6 +557,7 @@
                 });
             });
         });
+        console.log(eventsList);
         return {
             resourcesList: resourcesList,
             eventsList: eventsList
@@ -595,10 +590,9 @@
      * @params event $element view
      * */
     function eventRenderfun (event, $element, view) {
-        console.log('event.id', event.id);
+/*        console.log('event.id', event.id);
         console.log('eventsList',eventsList);
-        console.log('eventDragFromExternal',eventDragFromExternal);
-
+        console.log('eventDragFromExternal',eventDragFromExternal);*/
         //如果是从模板拖拽进来的需要做额外处理，把模板数组里的事件，加入到事件数组中，并重新生成模板的id
         if (eventDragFromExternal[event.id]) {
             console.log(event);
@@ -655,9 +649,9 @@
             $tpl.find('.inspector').append($inspector);
         });
         //插入id
-        var $id = $('<span class="id"> </span>');
+/*        var $id = $('<span class="id"> </span>');
         $id.text(event.id);
-        $tpl.find('.log').append($id);
+        $tpl.find('.log').append($id);*/
         //插入log
         var $log = $('<span class=""> </span>');
         $log.text(thisClassEvent.log);
@@ -683,6 +677,10 @@
                 bindNameClickDel(); //绑定人名点击事件
             }
         }
+        /*事件的高度对齐*/
+        $('#calendar .fc-timeline-event.fc-event').each(function (index) {
+            console.log($(this).height())
+        })
     }
     /**
      * @desc 打开layer新建框 新建事件
@@ -728,8 +726,9 @@
                 //是否diyTime，并设置自定义时间
                 if ($('#is-diy-time').prop('checked')) {
                     eventsListItem.isDiyClassTime = 1;
-                    eventsListItem.diyTimeStart =  $layDom.find('#class-time-start').val();
-                    eventsListItem.diyTimeEnd =  $layDom.find('#class-time-end').val();
+
+                    eventsListItem.diyTimeStart =  $layDom.find('#class-time-start input').val();
+                    eventsListItem.diyTimeEnd =  $layDom.find('#class-time-end input').val();
                 } else {
                     eventsListItem.isDiyClassTime = 0;
                 }
@@ -782,8 +781,8 @@
                 /*填充自定义时间*/
                 if (eventsList[eventsListMap[event.id]].isDiyClassTime == 1) {
                     $('#is-diy-time').prop('checked', true).trigger('change');
-                    $layDom.find('#class-time-start').val(eventsList[eventsListMap[event.id]].diyTimeStart);
-                    $layDom.find('#class-time-end').val(eventsList[eventsListMap[event.id]].diyTimeEnd);
+                    $layDom.find('#class-time-start input').val(eventsList[eventsListMap[event.id]].diyTimeStart);
+                    $layDom.find('#class-time-end input').val(eventsList[eventsListMap[event.id]].diyTimeEnd);
                 } else {
                     $('#is-diy-time').prop('checked', false);
                 }
@@ -815,8 +814,8 @@
                 //是否diyTime，并设置自定义时间
                 if ($('#is-diy-time').prop('checked')) {
                     eventsListItem.isDiyClassTime = 1;
-                    eventsListItem.diyTimeStart =  $layDom.find('#class-time-start').val();
-                    eventsListItem.diyTimeEnd =  $layDom.find('#class-time-end').val();
+                    eventsListItem.diyTimeStart =  $layDom.find('#class-time-start input').val();
+                    eventsListItem.diyTimeEnd =  $layDom.find('#class-time-end input').val();
                 } else {
                     eventsListItem.isDiyClassTime = 0;
                 }
@@ -1139,7 +1138,7 @@
     }
     /**
      * @desc 数据打包
-     * @param eventsList
+     *
      */
     function dataPackage() {
         $('#data-package').on('click',function (event) {
@@ -1156,9 +1155,15 @@
      * @param view
      */
     function eventMouseoverFun (event, jsEvent, view) {
-        console.log(jsEvent.currentTarget);
-        var thisEvent = eventsList[eventsListMap[event.id]];
-        var timeInfo = '';
+        /*用于判断备注是否有省略*/
+        var wrapWidth = $(jsEvent.currentTarget).find('.item-wrap.log').innerWidth();
+        var spanWidth = $(jsEvent.currentTarget).find('.item-wrap.log>span').innerWidth();
+        var thisEvent = eventsList[eventsListMap[event.id]]; //从事件列表中取出当前事件
+        var timeInfo = ''; //自定义时间
+        /*如果 没有省略 而且 没有自定义时间*/
+        if (spanWidth < wrapWidth && !parseInt(thisEvent.isDiyClassTime)) {
+            return false;
+        }
         //无自定义时间时不显示时间信息
         if (parseInt(thisEvent.isDiyClassTime)) {
             var s = thisEvent.diyTimeStart;
@@ -1171,7 +1176,7 @@
             skin: 'white-tip',
             area: ['200px']
         });
-        console.log(event.id + 'in' + layerTipIndex);
+        //console.log(event.id + 'in' + layerTipIndex);
     }
     /**
      * @desc 鼠标移除事件时的回调函数
@@ -1180,13 +1185,14 @@
      * @param view
      */
     function eventMouseoutFun (event, jsEvent, view) {
-        var thisEvent = eventsList[eventsListMap[event.id]];
-        //无自定义时间时，直接返回
-        /*if (!parseInt(thisEvent.isDiyClassTime)) {
+        var wrapWidth = $(jsEvent.currentTarget).find('.item-wrap.log').innerWidth();
+        var spanWidth = $(jsEvent.currentTarget).find('.item-wrap.log>span').innerWidth();
+        var thisEvent = eventsList[eventsListMap[event.id]]; //从事件列表中取出当前事件
+        /*如果 没有省略 而且 没有自定义时间*/
+        if (spanWidth < wrapWidth && !parseInt(thisEvent.isDiyClassTime)) {
             return false;
-        }*/
+        }
         layer.close(layerTipIndex);
-        console.log(event.id + 'out' + layerTipIndex);
     }
     /**
      * @desc 激活时间选择器

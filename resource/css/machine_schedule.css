@@ -1,10 +1,17 @@
+body {
+    overflow: scroll;
+}
 #calendar {
     width: 100%;
 }
-
-/*        #calendar span {
-            color: #777777;
-        }*/
+.no-margin-container{
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    //min-width: 1200px;
+    width: 1300px;
+}
 span.card-item {
     color: white;
 }
@@ -80,6 +87,10 @@ span.card-item {
     white-space: normal;
     line-height: 2;
 
+}
+#calendar .fc-timeline-event.fc-event{
+    /*height: 100%;
+    box-sizing: border-box;*/
 }
 
 /*人名不分行*/
@@ -162,6 +173,7 @@ span.card-item {
     -moz-box-shadow: 0 2px 4px rgba(0,0,0,.2);
     -webkit-box-shadow: 0 2px 4px rgba(0,0,0,.2);
 }
+
 /*取消按钮的边框*/
 .fc-toggleClickMode-button:focus{
     outline:none;
