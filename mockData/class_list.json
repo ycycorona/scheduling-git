@@ -18,13 +18,13 @@
                 "name": "paik sung wook"
               },
               {
-                "pCode": "1169",
+                "pCode": "1190",
                 "name": "张国磊"
               }
             ],
             "teachers": [
               {
-                "pCode": "1056",
+                "pCode": "1011",
                 "name": "王武章"
               }
             ],
@@ -45,7 +45,7 @@
             },
             "students": [
               {
-                "pCode": "1151",
+                "pCode": "1199",
                 "name": "杨帆"
               },
               {
@@ -70,7 +70,7 @@
         ]
       },
       {
-        "machineNO": "A320-2",
+        "machineNO": "IPT-1",
         "clas": [
 
         ]
@@ -96,7 +96,7 @@
                 "name": "paik sung wook"
               },
               {
-                "pCode": "1169",
+                "pCode": "1190",
                 "name": "张国磊"
               }
             ],
@@ -131,7 +131,7 @@
                 "name": "邹泰庐"
               },
               {
-                "pCode": "1169",
+                "pCode": "1190",
                 "name": "张国磊"
               }
             ],
@@ -158,7 +158,7 @@
             },
             "students": [
               {
-                "pCode": "1151",
+                "pCode": "1199",
                 "name": "杨帆"
               },
               {
@@ -297,7 +297,7 @@
             },
             "students": [
               {
-                "pCode": "1151",
+                "pCode": "1199",
                 "name": "杨帆"
               },
               {

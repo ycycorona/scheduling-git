@@ -145,17 +145,18 @@ table {
     height: 28px;
     padding: 0 8px;
 }
-
-.btn-group .search-input {
-    margin: 0 3px;
+.table-tool .btn-group .search-input {
     border-radius: 3px;
-    border: 1px solid #ccc;
+    border: 1px solid #1c84c6;
+    border-right:0 solid #1c84c6;
+    border-top-right-radius:0;
+    border-bottom-right-radius:0;
 }
-
-.btn-group.pull-right .search-input-btn {
-    border-radius: 3px !important;
+.table-tool .btn.btn-success:hover,
+.table-tool .btn.btn-success:active,
+.table-tool .btn.btn-success:focus{
+    background:#1c84c6 !important;
 }
-
 .checkbox input[type=checkbox],
 .radio input[type=radio] {
     margin-top: 4px;
@@ -177,4 +178,48 @@ table {
 }
 .form-horizontal .has-feedback .form-control-feedback{
     right:-13px;
+}
+td .time-formatter{
+    padding:3px 8px;
+}
+td .time-formatter:not(:last-child){
+    border-bottom:1px solid #ccc;
+}
+td .time-formatter > span{
+    font-weight:bold;
+}
+td .plan-formatter{
+    padding:3px 8px;
+}
+.no-padding-r{
+    padding-right:0;
+}
+::-webkit-scrollbar
+{
+    width: 0;
+    height: 11px;
+}
+::-webkit-scrollbar-track-piece
+{
+    background-color: #f3f3f4;
+}
+/*::-webkit-scrollbar-thumb:vertical
+{
+    height: 5px;
+    background-color: #999999;
+    -webkit-border-radius: 3px;
+}*/
+::-webkit-scrollbar-thumb:horizontal
+{
+    width: 10px;
+    background-color: #c3c3c3;
+}
+.layer-title-blue .layui-layer-title{
+    background:#0099cc;
+}
+.layer-title-blue .layui-layer-title{
+    color:#fff;
+}
+.layer-title-blue .layui-layer-setwin .layui-layer-close1{
+    background-position:0 -55px;
 }

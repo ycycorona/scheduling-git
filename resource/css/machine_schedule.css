@@ -126,7 +126,8 @@ span.card-item {
 }
 
 .margin-top {
-    margin-top: 50px;
+    /*margin-top: 50px;*/
+    min-height: 50px;
 }
 
 .tpl-hide {
@@ -156,6 +157,7 @@ span.card-item {
 
 .user-help {
     color: darkorange;
+    color: dodgerblue;
 }
 .time-notice {
     position: absolute;
@@ -183,4 +185,20 @@ span.card-item {
 .cancel-tpl:hover {
     color: red;
     cursor: pointer;
+}
+
+
+.calendar-tool .btn-group .search-input {
+    border-radius: 3px;
+    border: 1px solid #1c84c6;
+    border-right: 0 solid #1c84c6;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.calendar-tool .btn-group .date-control{
+    margin-bottom: 0;
+}
+.table-tool-btn, .dropdown-toggle.btn {
+    height: 28px;
+    padding: 0 8px;
 }
