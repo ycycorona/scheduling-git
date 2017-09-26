@@ -23,62 +23,53 @@
     <div class="margin-top"></div>
     <div class="row">
         <!--模板放置区-->
-        <div class="col-xs-2" >
-            <!--vue control-->
-            <div class="ibox float-e-margins" id="tpl-wrap">
-                <div class="ibox-title ibox-title-blue">
-                    <h5><i class="fa fa-pencil"></i>&nbsp;排班模板</h5>
+        <div class="col-xs-2 " >
+            <div class="left-section">
+                <!--vue control-->
+                <div class="ibox float-e-margins" id="tpl-wrap">
+                    <div class="ibox-title ibox-title-blue">
+                        <h5><i class="fa fa-pencil"></i>&nbsp;排班模板</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="btn-group " id="table0-toolbar" role="group" >
+                            <button
+                                    @click="vOpenLayerCreateTpl"
+                                    type="button"
+                                    class="btn btn-outline btn-default btn-add"
+                                    data-toggle="tooltip"
+                                    title="添加">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                            <!--测试说明-->
+                        <div class="ui-widget-content external-event-box" >
+                            <class-tpl
+                                    @dblclick.native="openLayerEditTpl(item)"
+                                    v-for="(item, index) in tplList"
+                                    :tpl="item"
+                                    :tpl-index="index"
+                                    :key="index"></class-tpl>
+                        </div>
+                        <div class="user-help">
+                            <h3>简单说明</h3>
+                            <p>一、排班模板使用</p>
+                            <p>1、双击上方的每个模板，可以编辑、删除模板。</p>
+                            <p>2、点击上方的<i aria-hidden="true" class="fa fa-plus"></i>，可以添加新模板。</p>
+                            <p>3、模板拖拽到排班表中，可以生成新课程。</p>
+                            <p>二、排班表使用</p>
+                            <p>1、拖拽每个课程到排班表的不同位置，可以指定课程的时间</p>
+                            <p>2、单击排班表中的空白方块，可以添加新的课程。</p>
+                            <p>3、排班表单击每个课程，可以编辑参加课程的学员、教员、检查员、并且可以在有特殊需求时，自行调整上课时间</p>
+                            <p>4、每个自定义了上课时间的课程上鼠标悬浮，会提示自定义时间;如果备注超出显示长度，也会提示备注</p>
+                            <p>5、激活快速删除模式，点击人名可以把该人从课程中删除</p>
+                        </div>
+                        <button class="btn btn-default" type="button" id="data-package" style="display: block;">
+                            get data
+                        </button>
+                    </div>
                 </div>
-                <div class="ibox-content">
-                    <div class="btn-group " id="table0-toolbar" role="group" >
-                        <button
-                        @click="vOpenLayerCreateTpl"
-                        type="button"
-                        class="btn btn-outline btn-default btn-add"
-                        data-toggle="tooltip"
-                        title="添加">
-                            <i class="fa fa-plus" aria-hidden="true"></i>
-                        </button>
-<!--                        <button type="button" class="btn btn-outline btn-default btn-edit" data-toggle="tooltip"
-                                title="修改">
-                            <i class="fa fa-edit" aria-hidden="true"></i>
-                        </button>
-                        <button type="button" class="btn btn-outline btn-default btn-delete" data-toggle="tooltip"
-                                title="删除">
-                            <i class="fa fa-trash" aria-hidden="true"></i>
-                        </button>
-                        <button type="button" class="btn btn-outline btn-default btn-refresh" data-toggle="tooltip"
-                                title="刷新">
-                            <i class="fa fa-refresh" aria-hidden="true"></i>
-                        </button>-->
-                    </div>
-                    <div class="ui-widget-content external-event-box" >
-                        <class-tpl
-                        @dblclick.native="openLayerEditTpl(item)"
-                        v-for="(item, index) in tplList"
-                        :tpl="item"
-                        :tpl-index="index"
-                        :key="index"></class-tpl>
-                    </div>
 
-                </div>
             </div>
-            <div class="user-help">
-                <h3>简单说明</h3>
-                <p>一、</p>
-                <p>1、双击上方的每个模板，可以编辑、删除模板。</p>
-                <p>2、点击上方的<i aria-hidden="true" class="fa fa-plus"></i>，可以添加新模板。</p>
-                <p>3、模板拖拽到排班表中，可以生成新课程。</p>
-                <p>二、</p>
-                <p>1、拖拽每个课程到排班表的不同位置，可以指定课程的时间</p>
-                <p>2、单击排班表中的空白方块，可以添加新的课程。</p>
-                <p>3、排班表单击每个课程，可以编辑参加课程的学员、教员、检查员、并且可以在有特殊需求时，自行调整上课时间</p>
-                <p>4、每个自定义了上课时间的课程上鼠标悬浮，会提示自定义时间</p>
-                <p>5、激活快速删除模式，点击人名可以把该人从课程中删除</p>
-            </div>
-            <button class="btn btn-default" type="button" id="data-package" style="display: none;">
-                get data
-            </button>
         </div>
         <!--排班表放置区-->
         <div class="col-xs-10">
@@ -96,7 +87,7 @@
 </div>
 <!--layer弹窗，新建、编辑排班事件-->
 <div class="wrapper wrapper-content layer-body" id="layer-body" style="display:none;">
-    <form class="form-horizontal" id="">
+    <form class="form-horizontal" >
         <div class="form-group">
             <label class="col-sm-3 control-label">学员</label>
             <div class="col-sm-7">
@@ -150,7 +141,40 @@
         </div>
     </form>
 </div>
-
+<!--模拟机新建面-->
+<div class="wrapper wrapper-content layer-body" id="layer-body-1" style="display:none;">
+    <form class="form-horizontal" >
+        <div class="form-group">
+            <label class="col-sm-3 control-label">日期</label>
+            <div class="col-sm-7">
+                <input type="text" id="create-machine-date" class="form-control"  name="create-machine-date">
+            </div>
+        </div>
+        <div class="form-group">
+            <label  class="col-sm-3 control-label">模拟机名称</label>
+            <div class="text-left col-sm-7">
+                <input type="text" id="create-machine-name" class="form-control"  name="create-machine-name">
+            </div>
+        </div>
+    </form>
+</div>
+<!--模拟机删除页面-->
+<div class="wrapper wrapper-content layer-body" id="layer-body-2" style="display:none;">
+    <form class="form-horizontal" >
+        <div class="form-group">
+            <label class="col-sm-3 control-label">日期</label>
+            <div class="col-sm-7">
+                <input type="text" id="select-machine-date" class="form-control"  name="select-machine-date">
+            </div>
+        </div>
+        <div class="form-group">
+            <label  class="col-sm-3 control-label">模拟机名称</label>
+            <div class="text-left col-sm-7">
+                <select id="select-machine-name"></select>
+            </div>
+        </div>
+    </form>
+</div>
 <!--模板区，复制用-->
 <div id="template" style="display: none">
     <!--渲染每个事件用到的模板-->
@@ -169,7 +193,7 @@
     <div class="calendar-tool">
         <div class="btn-group" style="position: relative;">
             <input type="text" placeholder="请选择日期" style="width:100px;height: 25px;"
-                   class="table-tool-btn search-input pull-left" id="date-picker"/>
+                   class="table-tool-btn search-input pull-left" id="class-table-date-picker"/>
             <button type="button" class="btn btn-outline btn-success date-control"
                     data-toggle="tooltip" title="前一天" id="prev-date-btn">
                 <i class="fa fa-arrow-left"></i>
@@ -210,7 +234,8 @@
             :data-event="dataEvent"
             class="fc-content fc-event col-xs-11"
             v-bindDrag="tpl"
-            v-bindGetHeight="tplIndex">
+            v-bindGetHeight="tplIndex"
+            v-activeDataEventChange>
             <div class="box-wrap">
                 <div class="no-margin item-wrap student">
                     <span class="card-item person student-item" v-for="(item, index) in tpl.students" :key="index">{{item.name}}</span>
@@ -227,6 +252,18 @@
     </div>
 </script>
 <script>
+    /*左侧悬浮*/
+    $(window).on('scroll',function (e) {
+        console.log();
+        var leftWidth = $('.left-section').outerWidth();
+        if ($(this).scrollTop() > 50) {
+            $('.left-section').addClass('fix-to-top');
+            $('.left-section').css({'width': leftWidth});
+        } else {
+            $('.left-section').removeClass('fix-to-top');
+            $('.left-section').css({'width': ''});
+        }
+    });
     /*插件参数重置*/
     $.fn.select2.defaults.set( "theme", "bootstrap" ); //使用select2-bootstrap主题
     moment.fn.toJSON = function() { return this.format()}; //处理时区的问题
@@ -248,7 +285,7 @@
         },
         template:'#class-tpl',
         created: function () {
-            vueComponentsTplList.push(this);
+            vueComponentsTplList.push(this); /*设置模板的全局变量，这样才能在函数里用this调用*/
         },
         computed: {
             //绑定data-event,拖拽到日历时用到的数据
@@ -256,7 +293,7 @@
                 var tmpObj = {
                     title: 'test',
                     id: this.tpl.id,
-                    duration: '01:00',
+                    duration: '02:00',
                     stick: true
                 };
                 $(this.$el).data('event', tmpObj);
@@ -277,11 +314,18 @@
             }
         },
         directives: {
+            activeDataEventChange: {
+                update: function (el, binding) {
+                    /*$.attr('data-event')的信息不会自动更新到$().data()；需要手动更新*/
+                    console.log($(el).data().event = JSON.parse($(el).attr('data-event'))) ;
+                }
+            },
             bindDrag: {
                 /*插入时绑定拖拽事件*/
                 inserted: function (el, binding) {
                     // make the event draggable using jQuery UI
                     $(el).draggable({
+                        scroll: false,
                         zIndex: 999,
                         revert: true,      // will cause the event to go back to its
                         revertDuration: 0  //  original position after the drag
@@ -304,7 +348,10 @@
             }
         }
     };
+    var _lg = console.log;
     /*全局变量初始化*/
+    var globalVar = {};
+    globalVar.currentDate = ''; //当前显示的月份
     var thisDate = '2017-01-01'; //把fullcalendar的日期写死，因为不在日历插件里涉及日期
     var layerTipIndex; //layer tip的index，close用
     /*日历的配置文件 timeLineOpt控制日历的显示*/
@@ -430,6 +477,7 @@
             data:userList,
             multiple: true
         });
+
         //日程表的配置
         var calendarOpt = {
             schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
@@ -452,11 +500,11 @@
             eventMouseout: eventMouseoutFun,
             /*日历内的事件拖拽 改变start和end*/
             eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
-                //console.log(changeEventTime(event));
+                changeEventByDrag(event);
             },
             /*日历内的事件改变形状 改变start和end*/
             eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
-                //console.log(changeEventTime(event));
+                changeEventByDrag(event);
             },
             /*外部事件拖拽事件*/
             drop:function (date, jsEvent, ui, resourceId ) {
@@ -470,18 +518,26 @@
             },
             editable: true, //是否可以拖拽编辑duration、起始时间
             droppable: true, //是否可以放置事件
-            aspectRatio: 0.5, //宽高比
+            aspectRatio: 2, //宽高比
             resourceAreaWidth: '20%', /*左侧资源区的宽度*/
             customButtons: { //自定义按钮
                 toggleClickMode: {
                     text: '快速删除模式已关闭',
                     click: toggleClickModeEvent
+                },
+                openLayerCreateMachine: {
+                    text: '增加模拟机',
+                    click: openLayerCreateMachine
+                },
+                openLayerDeleteMachine: {
+                    text: '删除模拟机',
+                    click: openLayerDeleteMachine
                 }
             },
             header: {
                 left: '',
                 center: '',
-                right: 'toggleClickMode'
+                right: 'toggleClickMode openLayerCreateMachine openLayerDeleteMachine'
             },
             defaultView: 'timelineDay', //默认视图
             /*视图设置*/
@@ -525,6 +581,7 @@
         $('#calendar .fc-header-toolbar .fc-left').append($('.calendar-tool'));
         /*时间选择器初始化*/
         dateTimePickerInit();
+        initMachineDatePicker(); //初始化模拟机的日期选择器
         //按钮事件绑定
         dataPackage();
         /*自定义表格头*/
@@ -576,6 +633,11 @@
                     eventObj.teachers = classFinal.teachers; //课程的老师
                     eventObj.inspectors = classFinal.inspectors; //课程的检查员
                     eventObj.log = classFinal.log; //课程的log
+                    //如果自定义了时间
+                    if (classFinal.isDiyClassTime) {
+                        eventObj.diyTimeStart = classFinal.diyTimeStart; //课程的自定义开始时间
+                        eventObj.diyTimeEnd = classFinal.diyTimeEnd; //课程的自定义结束时间
+                    }
                     eventsList.push(eventObj);
                 });
             });
@@ -677,7 +739,7 @@
         $tpl.find('.log').append($id);*/
         //插入log
         var $log = $('<span class=""> </span>');
-        $log.text(thisClassEvent.log);
+        $log.text(event.id + thisClassEvent.log);
         $tpl.find('.log').append($log);
         //如果自定义了时间，插入时间标记 isDiyClassTime=0 or 1
         if (thisClassEvent.isDiyClassTime) {
@@ -971,6 +1033,79 @@
         });
     }
     /**
+     * @desc 创建新模拟机
+     * */
+    function openLayerCreateMachine () {
+        layer.open({
+            title: '新建模拟机',
+            type: 1,
+            skin: '', //样式类名
+            zIndex: 800,
+            area: ['550px',''],
+            btn:["保存", "取消"],
+            success:function($layDom){
+                //重置select2、以及表单
+                resetSelect2(['#select-machine-name']);
+                //限制日期到当前月份
+                $('#create-machine-date').datetimepicker('setStartDate', globalVar.currentMonthStart);
+                $('#create-machine-date').datetimepicker('setEndDate', globalVar.currentMonthEnd);
+            },
+            yes: function(index, $layDom){
+                var date = $('#create-machine-date').val();
+                var name = $('#create-machine-name').val();
+                addMachine(date, name);
+                layer.close(layer.index);
+            },
+            content: $("#layer-body-1"),
+            end: function () {
+                //重置select2、以及表单
+                resetSelect2(['#select-machine-name']);
+            }
+        });
+    }
+    /**
+     * @desc 删除模拟机
+     **/
+    function openLayerDeleteMachine () {
+        layer.open({
+            title: '删除模拟机',
+            type: 1,
+            skin: '', //样式类名
+            zIndex: 800,
+            area: ['550px',''],
+            btn:["删除", "取消"],
+            success:function($layDom){
+                /*初始化模拟机选择器*/
+                var machineOpt = $.map(Dateobj.resourcesList, function (item, index) {
+                    return {
+                        id: item.id,
+                        text: item.machineNO
+                    }
+                });
+                $('#select-machine-name').empty().select2({
+                    placeholder: '选择模拟机',
+                    data: machineOpt,
+                    multiple: true,
+                    width: '100%'
+                });
+                //重置select2、以及表单
+                resetSelect2(['#select-machine-name']);
+                //限制日期到当前月份
+                $('#select-machine-date').datetimepicker('setStartDate', globalVar.currentMonthStart);
+                $('#select-machine-date').datetimepicker('setEndDate', globalVar.currentMonthEnd);
+            },
+            yes: function(index, $layDom){
+
+                layer.close(layer.index);
+            },
+            content: $("#layer-body-2"),
+            end: function () {
+                //重置select2
+                resetSelect2(['#select-machine-name']);
+            }
+        });
+    }
+    /**
      * @desc 向统一的事件库加入事件资源
      * @param eventGeneObj {Object} 包含所有必须事件信息的对象
      */
@@ -1043,17 +1178,15 @@
         }
     }
     /**
-     * @desc 在eventsList中改变drag或者resize事件的时间参数
+     * @desc 在eventsList中改变drag或者resize事件的时间参数 以及resouceid
      * @param event
-     * @return {Object} 改变的start和end
+     * @return {{classOrder: int, classDuration: Object}}
      */
-    function changeEventTime (event) {
+    function changeEventByDrag (event) {
         eventsList[eventsListMap[event.id]].start = event.start.format();
         eventsList[eventsListMap[event.id]].end = event.end.format();
-        return {
-            start: moment(event.start.format()).format(),
-            end: moment(event.end.format()).format()
-        }
+        eventsList[eventsListMap[event.id]].resourceId = parseInt(event.resourceId);
+        return turnDisplayTimeToOrder(moment(event.start.format()).format(), moment(event.end.format()).format());
     }
     /**
      * @desc 清理特定的select2的val 以及layer里的表单
@@ -1064,6 +1197,7 @@
             $(selector).val(null).trigger('change');
         });
         $('#layer-body > form')[0].reset();
+        $('#layer-body-1 > form')[0].reset();
         $('#is-diy-time').prop('checked', false);
         $('#is-diy-time').trigger('change');
     }
@@ -1236,34 +1370,78 @@
         });
 
         //日期选择器初始化
-        $("#date-picker").datetimepicker({
-            minView: "month",
+        $("#class-table-date-picker").datetimepicker({
+            startView: 3,
+            minView: 3,
             language: 'zh-CN',
-            format: 'yyyy-mm-dd',
+            format: 'yyyy-mm',
             autoclose: true,
             todayBtn: true,
             todayHighlight: true,
             pickerPosition: "bottom-right"
         }).on('changeDate', function (ev) {
-            var date = $("#date-picker").val();
+            var date = $("#class-table-date-picker").val();
+            globalVar.currentDate = date;  //格式2017-09
+            /*获取当月的第一天和最后一天*/
+            var startEndDateObj = getStartAndEndDateOfMonth(globalVar.currentDate);
+            /*限制模拟机时间选择器的时间范围*/
+            globalVar.currentMonthStart = startEndDateObj.start;
+            globalVar.currentMonthEnd = startEndDateObj.end;
             //todo: 初始化日历方法还没写
             initCalendar(date);
         });
         //初始化显示今天
-        $("#date-picker").datetimepicker("setDate", new Date()).trigger('changeDate');
+        $("#class-table-date-picker").datetimepicker("setDate", new Date()).trigger('changeDate');
         //上一天、下一天按钮事件绑定
         $('#next-date-btn').on('click', function () {
-            var dateObj = moment($("#date-picker").val());
+            var dateObj = moment($("#class-table-date-picker").val());
             //加一天
             dateObj.add(1, 'day');
-            $("#date-picker").datetimepicker("setDate", new Date(dateObj.format()) ).trigger('changeDate');
+            $("#class-table-date-picker").datetimepicker("setDate", new Date(dateObj.format()) ).trigger('changeDate');
         });
         $('#prev-date-btn').on('click', function () {
-            var dateObj = moment($("#date-picker").val());
+            var dateObj = moment($("#class-table-date-picker").val());
             //减一天
             dateObj.subtract(1, 'day');
-            $("#date-picker").datetimepicker("setDate", new Date(dateObj.format()) ).trigger('changeDate');
+            $("#class-table-date-picker").datetimepicker("setDate", new Date(dateObj.format()) ).trigger('changeDate');
         });
+    }
+    /**
+     * @desc 初始化模拟机的日期选择
+     **/
+    function initMachineDatePicker () {
+        /*创建模拟机的日期选择器*/
+        $('#create-machine-date').datetimepicker({
+            startView: 2,
+            minView: 2,
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true,
+            pickerPosition: "bottom-right"
+        });
+        /*删除模拟机的日期选择器*/
+        $('#select-machine-date').datetimepicker({
+            startView: 2,
+            minView: 2,
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true,
+            pickerPosition: "bottom-right"
+        });
+    }
+    /**
+     * @desc 获取当月的第一天和最后一天
+     * @param DateString {String} 例如 2017-09
+     * @return
+     **/
+    function getStartAndEndDateOfMonth (DateString) {
+        var currentDate = new moment(DateString);
+        return {
+            start: currentDate.startOf('month').format('YYYY-MM-DD'),
+            end: currentDate.endOf('month').format('YYYY-MM-DD')
+        }
     }
     /**
      * @desc 自定义排班表的表头，并删除原来的
@@ -1284,6 +1462,32 @@
      */
     function initCalendar (date) {
         console.log('重新加载排班表');
+    }
+    /**
+     * @desc 更新eventsList中的课程order信息
+     * @param orderObj {Object}
+     * @param eventId {int}
+     */
+/*    function changeeventOrder(orderObj, eventId) {
+        console.log(orderObj, eventId);
+        var thisClass = eventsList[eventsListMap[event.id]]; //拿到当前课程在eventsList中的引用
+    }*/
+
+    /**
+     * @desc 添加模拟机编号
+     * @param date {String} 格式 2017-09-01
+     * @param name {String}
+     */
+    function addMachine (date, name) {
+        var resourcesList = Dateobj.resourcesList; //获取资源列表的引用
+        var newMachineObj = {
+            id: resourcesList.length + 1,
+            date: date,
+            machineNO: name,
+            eventColor: "#3b91ad"
+        };
+        resourcesList.push(newMachineObj);
+        $('#calendar').fullCalendar( 'refetchResources' ); //重新加载资源
     }
 </script>
 </body>

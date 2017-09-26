@@ -199,10 +199,10 @@ td .plan-formatter{
     width: 0;
     height: 11px;
 }
-::-webkit-scrollbar-track-piece
+/*::-webkit-scrollbar-track-piece
 {
     background-color: #f3f3f4;
-}
+}*/
 /*::-webkit-scrollbar-thumb:vertical
 {
     height: 5px;

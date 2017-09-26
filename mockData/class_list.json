@@ -37,7 +37,9 @@
             "log": "恢复资格训练（1、2）"
           },
           {
-            "isDiyClassTime": 0,
+            "isDiyClassTime": 1,
+            "diyTimeStart": "17:00",
+            "diyTimeEnd": "20:30",
             "classOrder": 5,
             "classDuration": {
               "hours": 2,
@@ -276,7 +278,7 @@
                 "name": "王云壮"
               }
             ],
-            "log": "ELT-IPT"
+            "log": "ELT-IPT测试备注溢出测试备注溢出测试备注溢出测试备注溢出"
           }
         ]
       }
