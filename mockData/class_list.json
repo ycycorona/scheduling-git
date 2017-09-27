@@ -12,6 +12,10 @@
               "hours": 2,
               "minutes": 0
             },
+            "classType": {
+              "id": 0,
+              "text": "恢复资格训练"
+            },
             "students": [
               {
                 "pCode": "1151",
@@ -44,6 +48,10 @@
             "classDuration": {
               "hours": 2,
               "minutes": 0
+            },
+            "classType": {
+              "id": 1,
+              "text": "复训"
             },
             "students": [
               {
@@ -92,6 +100,10 @@
               "hours": 2,
               "minutes": 0
             },
+            "classType": {
+              "id": 1,
+              "text": "复训"
+            },
             "students": [
               {
                 "pCode": "1151",
@@ -122,6 +134,10 @@
             "classDuration": {
               "hours": 2,
               "minutes": 0
+            },
+            "classType": {
+              "id": 1,
+              "text": "复训"
             },
             "students": [
               {
@@ -158,6 +174,10 @@
               "hours": 2,
               "minutes": 0
             },
+            "classType": {
+              "id": 2,
+              "text": "评估"
+            },
             "students": [
               {
                 "pCode": "1199",
@@ -188,6 +208,10 @@
             "classDuration": {
               "hours": 2,
               "minutes": 0
+            },
+            "classType": {
+              "id": 1,
+              "text": "复训"
             },
             "students": [
               {
@@ -225,6 +249,10 @@
               "hours": 2,
               "minutes": 0
             },
+            "classType": {
+              "id": 2,
+              "text": "评估"
+            },
             "students": [
               {
                 "pCode": "1153",
@@ -255,6 +283,10 @@
             "classDuration": {
               "hours": 2,
               "minutes": 0
+            },
+            "classType": {
+              "id": 0,
+              "text": "恢复资格训练"
             },
             "students": [
               {
@@ -296,6 +328,10 @@
             "classDuration": {
               "hours": 2,
               "minutes": 0
+            },
+            "classType": {
+              "id": 0,
+              "text": "恢复资格训练"
             },
             "students": [
               {

@@ -226,3 +226,15 @@ span.card-item {
 ::-webkit-scrollbar-thumb {
     background-color: #c3c3c3;
 }
+.left-cover {
+    display: none;
+}
+.left-cover-active {
+    display: block;
+    position: fixed;
+    height: 5000px;
+    width: 200px;
+    z-index: 998;
+    background-color: #000;
+    opacity: 0.3;
+}

@@ -3,6 +3,10 @@
     "isDiyClassTime": 0,
 
     "id": "",
+    "classType": {
+      "id": 1,
+      "text": "复训"
+    },
     "students": [
       {
         "pCode": "1199",
@@ -28,6 +32,10 @@
     "isDiyClassTime": 0,
 
     "id": "",
+    "classType": {
+      "id": 1,
+      "text": "复训"
+    },
     "students": [
       {
         "pCode": "1151",

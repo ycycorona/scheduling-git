@@ -23,7 +23,8 @@
     <div class="margin-top"></div>
     <div class="row">
         <!--模板放置区-->
-        <div class="col-xs-2 " >
+        <div class="col-xs-2 left-section-wrap" >
+            <div class="left-cover"></div>
             <div class="left-section">
                 <!--vue control-->
                 <div class="ibox float-e-margins" id="tpl-wrap">
@@ -50,7 +51,7 @@
                                     :tpl-index="index"
                                     :key="index"></class-tpl>
                         </div>
-                        <div class="user-help">
+<!--                        <div class="user-help">
                             <h3>简单说明</h3>
                             <p>一、排班模板使用</p>
                             <p>1、双击上方的每个模板，可以编辑、删除模板。</p>
@@ -62,7 +63,7 @@
                             <p>3、排班表单击每个课程，可以编辑参加课程的学员、教员、检查员、并且可以在有特殊需求时，自行调整上课时间</p>
                             <p>4、每个自定义了上课时间的课程上鼠标悬浮，会提示自定义时间;如果备注超出显示长度，也会提示备注</p>
                             <p>5、激活快速删除模式，点击人名可以把该人从课程中删除</p>
-                        </div>
+                        </div>-->
                         <button class="btn btn-default" type="button" id="data-package" style="display: block;">
                             get data
                         </button>
@@ -104,6 +105,12 @@
             <label  class="col-sm-3 control-label">检查员</label>
             <div class="text-left col-sm-7">
                 <select id="select-inspectors"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label  class="col-sm-3 control-label">课程类型</label>
+            <div class="text-left col-sm-7">
+                <select id="select-class-type"></select>
             </div>
         </div>
         <div class="form-group">
@@ -328,7 +335,27 @@
                         scroll: false,
                         zIndex: 999,
                         revert: true,      // will cause the event to go back to its
-                        revertDuration: 0  //  original position after the drag
+                        revertDuration: 0,  //  original position after the drag
+                        start: function (event, ui) {
+                            $('#tpl-wrap .ibox-content').css({
+                                'overflow': 'visible'
+                            });
+                            $('.left-cover')
+                                .addClass('left-cover-active')
+                                .css({
+                                    'width': $('.left-section-wrap').width()
+                                });
+                        },
+                        drag: function (event, ui ) {
+
+                        },
+                        stop: function () {
+                            $('#tpl-wrap .ibox-content').css({
+                                'overflow': 'auto',
+                                'height': ''
+                            });
+                            $('.left-cover').removeClass('left-cover-active');
+                        }
                     });
                 }
             },
@@ -423,7 +450,7 @@
                 eventDragFromExternal[tpl.id] = true;
                 //console.log('tpl.id ' + tpl.id );
             }); //给刚加载的模板，设置id
-
+            console.log(tplList);
             tplListMap = getArrayMapById(tplList); //生成map
         }
     });
@@ -477,7 +504,25 @@
             data:userList,
             multiple: true
         });
-
+        var classTypeList = [
+            {
+                id: 0,
+                text:'恢复资格训练'
+            },
+            {
+                id: 1,
+                text:'复训'
+            },
+            {
+                id: 2,
+                text:'评估'
+            }
+        ];
+        $('#select-class-type').select2({
+            placeholder: '选择课程类型',
+            data:classTypeList,
+            multiple: false
+        });
         //日程表的配置
         var calendarOpt = {
             schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
@@ -633,6 +678,7 @@
                     eventObj.teachers = classFinal.teachers; //课程的老师
                     eventObj.inspectors = classFinal.inspectors; //课程的检查员
                     eventObj.log = classFinal.log; //课程的log
+                    eventObj.classType = classFinal.classType; //课程的log
                     //如果自定义了时间
                     if (classFinal.isDiyClassTime) {
                         eventObj.diyTimeStart = classFinal.diyTimeStart; //课程的自定义开始时间
@@ -692,7 +738,8 @@
                 log: thisTpl.log,
                 students: cloneObj(thisTpl.students),
                 teachers: cloneObj(thisTpl.teachers),
-                inspectors: cloneObj(thisTpl.inspectors)
+                inspectors: cloneObj(thisTpl.inspectors),
+                classType: cloneObj(thisTpl.classType)
             };
             addEventToEventsList(eventsListItem);
             //重置模板的ID
@@ -737,10 +784,15 @@
 /*        var $id = $('<span class="id"> </span>');
         $id.text(event.id);
         $tpl.find('.log').append($id);*/
+        //插入课程类型
+/*        var $classType = $('<span class="class-type"> </span>');
+        $classType.text(event.id + thisClassEvent.classType);
+        $tpl.find('.log').append($classType);*/
         //插入log
         var $log = $('<span class=""> </span>');
-        $log.text(event.id + thisClassEvent.log);
+        $log.text(event.id + thisClassEvent.classType.text + thisClassEvent.log);
         $tpl.find('.log').append($log);
+
         //如果自定义了时间，插入时间标记 isDiyClassTime=0 or 1
         if (thisClassEvent.isDiyClassTime) {
             var $timeNotice = $('<i class="fa fa-exclamation time-notice" aria-hidden="true"></i>');
@@ -781,7 +833,7 @@
             btn:["保存","取消"],
             success:function($layDom){
                 //重置表单
-                resetSelect2(['#select-students', '#select-teachers', '#select-inspectors']);
+                resetSelect2(['#select-class-type', '#select-students', '#select-teachers', '#select-inspectors']);
             },
             yes: function(index, $layDom){
                 //生成事件对象
@@ -792,10 +844,10 @@
                     end: end
                 };
                 /*格式化select2选出的人员*/
-                var students = formatSelect2Result('#select-students');
-                var teachers = formatSelect2Result('#select-teachers');
-                var inspectors = formatSelect2Result('#select-inspectors');
-
+                var students = formatPersonSelect2Result('#select-students');
+                var teachers = formatPersonSelect2Result('#select-teachers');
+                var inspectors = formatPersonSelect2Result('#select-inspectors');
+                var classType = formatSelect2classTypeResult('#select-class-type');
                 //向统一的事件库加入事件资源
                 var eventsListItem = {
                     id: eventData.id,
@@ -806,7 +858,8 @@
                     log: $layDom.find('#input-log').val(),
                     students: students,
                     teachers: teachers,
-                    inspectors: inspectors
+                    inspectors: inspectors,
+                    classType: classType
                 };
                 //是否diyTime，并设置自定义时间
                 if ($('#is-diy-time').prop('checked')) {
@@ -829,7 +882,7 @@
             content: $("#layer-body"),
             end: function () {
                 //重置select2
-                resetSelect2(['#select-students', '#select-teachers', '#select-inspectors']);
+                resetSelect2(['#select-class-type', '#select-students', '#select-teachers', '#select-inspectors']);
             }
         });
     }
@@ -847,7 +900,7 @@
             btn:["保存", "删除", "取消"],
             success:function($layDom){
                 //重置select2、以及表单
-                resetSelect2(['#select-students', '#select-teachers', '#select-inspectors']);
+                resetSelect2(['#select-class-type', '#select-students', '#select-teachers', '#select-inspectors']);
                 /*填充已经存在的人员*/
                 /*格式化select2选出的人员的val*/
                 var studentsVal = $.map(eventsList[eventsListMap[event.id]].students, function (obj) {
@@ -862,6 +915,7 @@
                 $('#select-students').val(studentsVal).trigger('change');
                 $('#select-teachers').val(teachersVal).trigger('change');
                 $('#select-inspectors').val(inspectorsVal).trigger('change');
+                $('#select-class-type').val(eventsList[eventsListMap[event.id]].classType.id).trigger('change');
                 $layDom.find('#input-log').val(eventsList[eventsListMap[event.id]].log);
                 /*填充自定义时间*/
                 if (eventsList[eventsListMap[event.id]].isDiyClassTime == 1) {
@@ -881,9 +935,10 @@
                     end: event.end
                 };
                 /*格式化select2选出的人员*/
-                var students = formatSelect2Result('#select-students');
-                var teachers = formatSelect2Result('#select-teachers');
-                var inspectors = formatSelect2Result('#select-inspectors');
+                var students = formatPersonSelect2Result('#select-students');
+                var teachers = formatPersonSelect2Result('#select-teachers');
+                var inspectors = formatPersonSelect2Result('#select-inspectors');
+                var classType = formatSelect2classTypeResult('#select-class-type');
                 //向统一的事件库加入事件资源
                 var eventsListItem = {
                     id: eventData.id,
@@ -894,7 +949,8 @@
                     log: $layDom.find('#input-log').val(),
                     students: students,
                     teachers: teachers,
-                    inspectors: inspectors
+                    inspectors: inspectors,
+                    classType: classType
                 };
                 //是否diyTime，并设置自定义时间
                 if ($('#is-diy-time').prop('checked')) {
@@ -922,7 +978,7 @@
             content: $("#layer-body"),
             end: function () {
                 //重置select2
-                resetSelect2(['#select-students', '#select-teachers', '#select-inspectors']);
+                resetSelect2(['#select-class-type', '#select-students', '#select-teachers', '#select-inspectors']);
             }
         });
     }
@@ -939,15 +995,16 @@
             btn:["保存", "取消"],
             success:function($layDom){
                 //重置select2、以及表单
-                resetSelect2(['#select-students', '#select-teachers', '#select-inspectors']);
+                resetSelect2(['#select-class-type', '#select-students', '#select-teachers', '#select-inspectors']);
                 hideInTpl(); //隐藏自定义时间选项
             },
             yes: function(index, $layDom){
                 //tplList
                 /*格式化select2选出的人员*/
-                var students = formatSelect2Result('#select-students');
-                var teachers = formatSelect2Result('#select-teachers');
-                var inspectors = formatSelect2Result('#select-inspectors');
+                var students = formatPersonSelect2Result('#select-students');
+                var teachers = formatPersonSelect2Result('#select-teachers');
+                var inspectors = formatPersonSelect2Result('#select-inspectors');
+                var classType = formatSelect2classTypeResult('#select-class-type');
                 //向模板库加入模板资源，此时定义id
                 var TplListItem = {
                     id: parseInt(moment().format('x')) + tplList.length, //用时间戳作为ID
@@ -955,8 +1012,8 @@
                     log: $layDom.find('#input-log').val(),
                     students: students,
                     teachers: teachers,
-                    inspectors: inspectors
-                    //isDragFromExternal: true是否是外部的拖拽事件
+                    inspectors: inspectors,
+                    classType: classType
                 };
                 tplList.splice(tplList.length,0,TplListItem); //添加模板元素
                 tplListMap = getArrayMapById(tplList);//重新生成map
@@ -966,7 +1023,7 @@
             content: $("#layer-body"),
             end: function () {
                 //重置select2
-                resetSelect2(['#select-students', '#select-teachers', '#select-inspectors']);
+                resetSelect2(['#select-class-type', '#select-students', '#select-teachers', '#select-inspectors']);
                 showInTpl(); //显示自定义时间选项
             }
         });
@@ -986,11 +1043,11 @@
             btn:["保存", "删除", "取消"],
             success:function($layDom){
                 //重置select2、以及表单
-                resetSelect2(['#select-students', '#select-teachers', '#select-inspectors']);
+                resetSelect2(['#select-class-type', '#select-students', '#select-teachers', '#select-inspectors']);
                 hideInTpl(); //隐藏自定义时间选项
                 /*填充已经存在的人员*/
                 /*格式化select2选出的人员的val*/
-                var thisTpl = tplList[tplListMap[event.id]];
+                var thisTpl = tplList[tplListMap[item.id]];
                 var studentsVal = $.map(item.students, function (obj) {
                     return obj.pCode;
                 });
@@ -1003,19 +1060,22 @@
                 $('#select-students').val(studentsVal).trigger('change');
                 $('#select-teachers').val(teachersVal).trigger('change');
                 $('#select-inspectors').val(inspectorsVal).trigger('change');
+                $('#select-class-type').val(thisTpl.classType.id).trigger('change');
                 $layDom.find('#input-log').val(item.log);
             },
             yes: function(index, $layDom){
                 //tplList
                 /*格式化select2选出的人员*/
-                var students = formatSelect2Result('#select-students');
-                var teachers = formatSelect2Result('#select-teachers');
-                var inspectors = formatSelect2Result('#select-inspectors');
+                var students = formatPersonSelect2Result('#select-students');
+                var teachers = formatPersonSelect2Result('#select-teachers');
+                var inspectors = formatPersonSelect2Result('#select-inspectors');
+                var classType = formatSelect2classTypeResult('#select-class-type');
                 //修改模板库的模板
                 item.log = $layDom.find('#input-log').val();
                 item.students = students;
                 item.teachers = teachers;
                 item.inspectors = inspectors;
+                item.classType = classType
                 layer.close(layer.index);
             },
             /*删除按钮*/
@@ -1027,7 +1087,7 @@
             content: $("#layer-body"),
             end: function () {
                 //重置select2
-                resetSelect2(['#select-students', '#select-teachers', '#select-inspectors']);
+                resetSelect2(['#select-class-type', '#select-students', '#select-teachers', '#select-inspectors']);
                 showInTpl(); //显示自定义时间选项
             }
         });
@@ -1202,17 +1262,29 @@
         $('#is-diy-time').trigger('change');
     }
     /**
-     * @desc 把select2选出的项格式化 返回一个新的对象
+     * @desc 把select2选出的人员项格式化 返回一个新的对象
      * @param selector {String} jquery id选择器
      * @returns {Array}
      */
-    function formatSelect2Result(selector) {
+    function formatPersonSelect2Result(selector) {
         return $.map($(selector).select2('data'), function (obj) {
             return {
                 name: obj.text,
                 pCode: obj.id
             }
         });
+    }
+    /**
+     * @desc 把select2选出的班级类型项格式化 返回一个新的对象
+     * @param selector {String} jquery id选择器
+     * @returns {Object}
+     */
+    function formatSelect2classTypeResult (selector) {
+        var obj = $(selector).select2('data')[0];
+        return {
+            text: obj.text,
+            id: obj.id
+        }
     }
     /**
      * @desc 对象复制
