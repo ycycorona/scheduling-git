@@ -324,7 +324,7 @@
             activeDataEventChange: {
                 update: function (el, binding) {
                     /*$.attr('data-event')的信息不会自动更新到$().data()；需要手动更新*/
-                    console.log($(el).data().event = JSON.parse($(el).attr('data-event'))) ;
+                    //console.log($(el).data().event = JSON.parse($(el).attr('data-event'))) ;
                 }
             },
             bindDrag: {
@@ -450,7 +450,7 @@
                 eventDragFromExternal[tpl.id] = true;
                 //console.log('tpl.id ' + tpl.id );
             }); //给刚加载的模板，设置id
-            console.log(tplList);
+            //console.log(tplList);
             tplListMap = getArrayMapById(tplList); //生成map
         }
     });
@@ -695,18 +695,9 @@
         };
     }
     /**
-     * @desc 创建一个eventResource
-     * @params 自建event对象
-     * @return 返回一个规定格式的event数组
-     * */
-    function generateEventResource(eventObj) {
-        var eventArray = [eventObj];
-        return eventArray;
-    }
-    /**
-     * @通过id返回map,数组需要满足对象的键要求
+     * @通过id返回map,
      * @param array {Array}
-     *
+     * @param {Object}
      * */
     function getArrayMapById(array) {
         var obj = {};
@@ -715,7 +706,6 @@
         });
         return obj;
     }
-
     /**
      * @desc 事件挂载到日历dom之前的拦截编辑
      * @params event $element view
@@ -903,25 +893,26 @@
                 resetSelect2(['#select-class-type', '#select-students', '#select-teachers', '#select-inspectors']);
                 /*填充已经存在的人员*/
                 /*格式化select2选出的人员的val*/
-                var studentsVal = $.map(eventsList[eventsListMap[event.id]].students, function (obj) {
+                var thisClass = eventsList[eventsListMap[event.id]];
+                var studentsVal = $.map(thisClass.students, function (obj) {
                     return obj.pCode;
                 });
-                var teachersVal = $.map(eventsList[eventsListMap[event.id]].teachers, function (obj) {
+                var teachersVal = $.map(thisClass.teachers, function (obj) {
                     return obj.pCode;
                 });
-                var inspectorsVal = $.map(eventsList[eventsListMap[event.id]].inspectors, function (obj) {
+                var inspectorsVal = $.map(thisClass.inspectors, function (obj) {
                     return obj.pCode;
                 });
                 $('#select-students').val(studentsVal).trigger('change');
                 $('#select-teachers').val(teachersVal).trigger('change');
                 $('#select-inspectors').val(inspectorsVal).trigger('change');
-                $('#select-class-type').val(eventsList[eventsListMap[event.id]].classType.id).trigger('change');
-                $layDom.find('#input-log').val(eventsList[eventsListMap[event.id]].log);
+                $('#select-class-type').val(thisClass.classType.id).trigger('change');
+                $layDom.find('#input-log').val(thisClass.log);
                 /*填充自定义时间*/
-                if (eventsList[eventsListMap[event.id]].isDiyClassTime == 1) {
+                if (thisClass.isDiyClassTime == 1) {
                     $('#is-diy-time').prop('checked', true).trigger('change');
-                    $layDom.find('#class-time-start input').val(eventsList[eventsListMap[event.id]].diyTimeStart);
-                    $layDom.find('#class-time-end input').val(eventsList[eventsListMap[event.id]].diyTimeEnd);
+                    $layDom.find('#class-time-start input').val(thisClass.diyTimeStart);
+                    $layDom.find('#class-time-end input').val(thisClass.diyTimeEnd);
                 } else {
                     $('#is-diy-time').prop('checked', false);
                 }
@@ -1016,7 +1007,7 @@
                     classType: classType
                 };
                 tplList.splice(tplList.length,0,TplListItem); //添加模板元素
-                tplListMap = getArrayMapById(tplList);//重新生成map
+                tplListMap = getArrayMapById(tplList); //重新生成map
                 eventDragFromExternal[TplListItem.id] = true; //是否是外部拖拽事件
                 layer.close(layer.index);
             },
@@ -1030,10 +1021,9 @@
     }
     /**
      * @desc 编辑模板
-     *
+     * @param 模板的每个class
      * */
     function openLayerEditTpl(item) {
-        console.log(item);
         layer.open({
             title: '编辑模板',
             type: 1,
@@ -1174,8 +1164,6 @@
         eventsListMap = getArrayMapById(eventsList);//重新生成map
         tplListMap = getArrayMapById(tplList);
     }
-
-
     /**
      * @desc 课程时间的转化，把classOrder、classDuration转换成插件可以识别的时间，从而渲染
      * @param classOrder 课程开始的节数
@@ -1533,7 +1521,7 @@
      * @param date
      */
     function initCalendar (date) {
-        console.log('重新加载排班表');
+        //console.log('重新加载排班表');
     }
     /**
      * @desc 更新eventsList中的课程order信息
