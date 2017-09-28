@@ -209,8 +209,8 @@ span.card-item {
 }
 
 .left-section .ibox-content {
-    height: 400px;
-    overflow: auto;
+    height: 600px;
+    overflow: visible;
 }
 
 ::-webkit-scrollbar

@@ -259,18 +259,6 @@
     </div>
 </script>
 <script>
-    /*左侧悬浮*/
-    $(window).on('scroll',function (e) {
-        console.log();
-        var leftWidth = $('.left-section').outerWidth();
-        if ($(this).scrollTop() > 50) {
-            $('.left-section').addClass('fix-to-top');
-            $('.left-section').css({'width': leftWidth});
-        } else {
-            $('.left-section').removeClass('fix-to-top');
-            $('.left-section').css({'width': ''});
-        }
-    });
     /*插件参数重置*/
     $.fn.select2.defaults.set( "theme", "bootstrap" ); //使用select2-bootstrap主题
     moment.fn.toJSON = function() { return this.format()}; //处理时区的问题
@@ -337,24 +325,13 @@
                         revert: true,      // will cause the event to go back to its
                         revertDuration: 0,  //  original position after the drag
                         start: function (event, ui) {
-                            $('#tpl-wrap .ibox-content').css({
-                                'overflow': 'visible'
-                            });
-                            $('.left-cover')
-                                .addClass('left-cover-active')
-                                .css({
-                                    'width': $('.left-section-wrap').width()
-                                });
+
                         },
                         drag: function (event, ui ) {
 
                         },
                         stop: function () {
-                            $('#tpl-wrap .ibox-content').css({
-                                'overflow': 'auto',
-                                'height': ''
-                            });
-                            $('.left-cover').removeClass('left-cover-active');
+
                         }
                     });
                 }
